@@ -1,3 +1,3 @@
-var wolfpack = require('./server');
+var pickup = require('./server');
 
-wolfpack();
+pickup();

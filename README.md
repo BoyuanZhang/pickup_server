@@ -1,1 +1,1 @@
-Wolfpack Server
+PickUp Node.js Server

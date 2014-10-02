@@ -3,6 +3,8 @@
 	"description": "Sports within reach",
 	"version": "1.0.0",
 	"dependencies": {
-		"express": "4.*"
+		"express": "4.*",
+		"body-parser" : "*",
+		"mongojs": "*"
 	}
 }
