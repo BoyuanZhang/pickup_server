@@ -12,7 +12,16 @@ var dataController = {
 		}
 		
 		//for the future if it is not a valid sign up then we can send back the proper HTTP status and message
-		res.end();
+		
+		//until Mongo is set up we return valid always
+		
+		var ret = {
+			userAuth: {
+				valid : true,
+				message : "success"
+			}
+		}
+		res.json(ret);
 	},
 	'login' : function( req, res ) {
 		//validate login information
@@ -31,7 +40,16 @@ var dataController = {
 		}
 		
 		//for the future if it is not a valid login then we can send back the proper HTTP status and message
-		res.end();
+		
+		//until Mongo is set up we return user does not exist always
+		
+		var ret = {
+			doesExist : {
+				exist : false,
+				type : "email"
+			}
+		}
+		res.json(ret);
 	}
 };
 
