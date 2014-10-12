@@ -12,8 +12,9 @@ function start() {
 	view(app);
 	data(app);
 	
-	app.listen(process.env.PORT || config.port);
-	console.log( 'PickUp Server is running' );
+	var port = (process.env.PORT) ? process.env.PORT  : config.port;
+	app.listen(port);
+	console.log( 'PickUp Server is running on port: ' + port );
 };
 
 module.exports = start;
