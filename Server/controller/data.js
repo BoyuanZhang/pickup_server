@@ -14,14 +14,19 @@ var dataController = {
 		//for the future if it is not a valid sign up then we can send back the proper HTTP status and message
 		
 		//until Mongo is set up we return valid always
-		
-		var ret = {
-			userAuth: {
-				valid : true,
-				message : "success"
+		if( validSignup ) {
+			var ret = {
+				userAuth: {
+					valid : true,
+					message : "success"
+				}
 			}
+			res.json(ret);
 		}
-		res.json(ret);
+		else {
+			res.statusCode = 400;
+			res.end();
+		}
 	},
 	'login' : function( req, res ) {
 		//validate login information
@@ -41,15 +46,46 @@ var dataController = {
 		
 		//for the future if it is not a valid login then we can send back the proper HTTP status and message
 		
-		//until Mongo is set up we return user does not exist always
-		
-		var ret = {
-			doesExist : {
-				exist : false,
-				type : "email"
+		//until Mongo is set up we return valid always
+		if( validLogin ) {
+			var ret = {
+				userAuth: {
+					valid : true,
+					message : "success"
+				}
 			}
+			res.json(ret);
 		}
-		res.json(ret);
+		else {
+			res.statusCode = 400;
+			res.end();		
+		}
+	},
+	'userExists' : function( req, res ) {
+		var validRequest = false;
+		
+		//validate request
+		if( req.body.doesExist ) {
+			var userInfo = req.body.doesExist;
+			if( util.validString( userInfo.email ) )
+				validRequest = true;
+		}
+		//for the future if it is not a valid login then we can send back the proper HTTP status and message
+		
+		//until Mongo is set up we return user does not exist always
+		if( validRequest ) {
+			var ret = {
+				doesExist: {
+					exist : false,
+					type : "email"
+				}
+			}
+			res.json(ret);
+		}
+		else {
+			res.statusCode = 400;
+			res.end();
+		}
 	}
 };
 
