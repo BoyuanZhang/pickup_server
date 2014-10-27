@@ -45,36 +45,61 @@ var dataController = {
 		}
 	},
 	'login' : function( req, res ) {
-		//validate login information
-		var validLogin = false;
+		var ret = {
+			userAuth : {}
+		}
 		
 		//first make sure everything exists
 		if( req.body.userLogin ) {
 			var userLogin = req.body.userLogin;
-			if( util.validString(userLogin.email) && util.validString(userLogin.password))
-				validLogin = true;
+			if( util.validString(userLogin.email) && util.validString(userLogin.password)) {
+				users.loginUser( userLogin, function( validLogin ) {
+					if( validLogin == true ) {
+						ret.userAuth.valid = true;
+						ret.userAuth.message = "User with email " + userLogin.email + ", successfully validated!";
+						res.json(ret);
+					}
+					else {
+						ret.userAuth.valid = false;
+						ret.userAuth.message = "Incorrect username or password combination for user with email: " + userLogin.email;
+						res.json(ret);
+					}
+				});
+			}
+			else {
+				res.statusCode = 400;
+				res.end();
+			}
 		}
 		else if( req.body.facebookUser ) {
 			var facebookUser = req.body.facebookUser;
-			if( util.validString(facebookUser.email))
-				validLogin = true;
-		}
-		
-		//for the future if it is not a valid login then we can send back the proper HTTP status and message
-		
-		//until Mongo is set up we return valid always
-		if( validLogin ) {
-			var ret = {
-				userAuth: {
-					valid : true,
-					message : "success"
-				}
+			if( util.validString(facebookUser.email) && util.validString(facebookUser.name)) {
+				users.registerFacebookUser( facebookUser, function(registeredMsg) {
+					if( registeredMsg == "success") {
+						ret.userAuth.valid = true;
+						ret.userAuth.message = "Facebook user with email " + facebookUser.email + ", successfully registered!";
+						res.json(ret);
+					}
+					else if( registeredMsg == "exists" ) {
+						ret.userAuth.valid = true;
+						ret.userAuth.message = "Facebook user with email " + facebookUser.email + ", already registered!";
+						res.json(ret);
+					}
+					else {
+						ret.userAuth.valid = false;
+						ret.userAuth.message = "Facebook user with email " + facebookUser.email + ", could not be registered";
+						res.json(ret);
+					}
+				});
 			}
-			res.json(ret);
+			else {
+				res.statusCode = 400;
+				res.end();
+			}
 		}
 		else {
 			res.statusCode = 400;
-			res.end();		
+			res.end();
 		}
 	},
 	'userExists' : function( req, res ) {
