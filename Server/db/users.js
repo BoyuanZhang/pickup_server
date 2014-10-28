@@ -1,6 +1,6 @@
 var root = require('../paths').root;
 	config = require(root + '/config'),
-	databaseURL = config.domain+':'+config.dbport + '/' + config.pickupdb,
+	databaseURL = process.env.MONGOLAB_URI || config.domain+':'+config.dbport + '/' + config.pickupdb,
 	mongojs = require("mongojs"),
 	db = mongojs( databaseURL );
 
