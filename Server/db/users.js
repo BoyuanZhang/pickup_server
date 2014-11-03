@@ -12,7 +12,7 @@ var data_users = {
 	'loginUser' : function( userLogin, callback ) {
 		var users = db.collection('users');
 		
-		users.findOne({email : userLogin.email, password : userLogin.password}, function(err, found) {
+		users.findOne({facebookUser : false, email : userLogin.email, password : userLogin.password}, function(err, found) {
 			if( err ) {
 				console.log( "user could not be searched for because an error occured while locating user: " + userLogin.email +", with error: " + err );
 				callback( false );
@@ -27,45 +27,14 @@ var data_users = {
 			}
 		});
 	},
-	'registerFacebookUser' : function( facebookUser, callback ) {
-		var users = db.collection('users');
-		
-		users.findOne({email : facebookUser.email, facebookUser : true}, function( err, found ) {
-			if( err ) {
-				console.log( "facebook user could not be searched for because an error occured while trying to find facebook user: " + facebookUser.email + ", with error: " + err );
-				callback("failed");
-			}
-			else if( found ) {
-				console.log( "facebook user with email : " + facebookUser.email + " already exists!");
-				callback("exists");
-			}
-			else {
-				var userObj = {
-					email : facebookUser.email,
-					password : "",
-					displayName : facebookUser.name,
-					facebookUser : true
-				}
-				users.save( userObj, function( err, saved ) {
-					if( err || !saved ) {
-						console.log( "Facebook user with email: " + facebookUser.email + ", was not saved due to error: " + err );
-						callback("failed");
-					}
-					else {
-						console.log( "Facebook user with email " + facebookUser.email + ", successfully saved!");
-						callback("success");
-					}
-				});
-			}
-		});
-	},
 	'registerUser' : function(newUser, callback) {
 		//set up object
 		var userObj = { 
 			email : newUser.email,
 			password : newUser.password,
+			username : newUser.username,
 			displayName : newUser.displayName,
-			facebookUser : false
+			facebookUser : newUser.facebookUser
 		}
 		console.log( "connecting to users table");
 		var users = db.collection('users');
@@ -80,21 +49,54 @@ var data_users = {
 			}
 		});
 	},
-	'checkUserExists' : function( userInfo, callback ) {
+	'checkEmailExists' : function( checkEmail, callback ) {
 		var users = db.collection('users');
 		
-		users.findOne({email : userInfo.email, facebookUser : false}, function( err, found ) {
+		users.findOne({email : checkEmail, facebookUser : false}, function( err, found ) {
 			if( err ) {
-				console.log( "user could not be validated because an error occured while trying to find user: " + userInfo.email + ", with error: " + err );
+				console.log( "user could not be validated because an error occured while trying to find email: " + checkEmail + ", with error: " + err );
 				callback(true);
 			}
 			else if( found ) {
-				console.log( "user with email : " + userInfo.email + " already exists!");
+				console.log( "user with email : " + checkEmail + " already exists!");
 				callback(true);
 			}
 			else {
 				callback(false);
 			}
+		});
+	},
+	'checkFacebookEmailExists' : function( checkEmail, callback) {
+		var users = db.collection('users');
+		
+		users.findOne({email : checkEmail, facebookUser : true}, function( err, found ) {
+			if( err ) {
+				console.log( "user could not be validated because an error occured while trying to find facebook email: " + checkEmail + ", with error: " + err );
+				callback(true);
+			}
+			else if( found ) {
+				console.log( "user with facebook email : " + checkEmail + " already exists!");
+				callback(true);
+			}
+			else {
+				callback(false);
+			}
+		});	
+	},
+	'checkUsernameExists' : function( checkUsername, callback) {
+		var users = db.collection('users');
+		
+		users.findOne({ username : checkUsername } , function(err, found ) {
+			if( err ) {
+				console.log("user could not be validated because an error occured while trying to find username: " + checkUsername + ", with error: " + err );
+				callback(true);
+			}
+			else if( found ) {
+				console.log( "user with username: " + checkUsername + " already exists!");
+				callback(true);
+			}
+			else 
+				callback(false);
 		});
 	}
 };
