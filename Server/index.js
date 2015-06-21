@@ -1,20 +1,25 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
 	config = require('../config'),
-	view = require('./routes/view'),
-	data = require('./routes/data'),
+	viewRouter = require('./routes/views/view'),
+	accountRouter = require('./routes/services/account'),
 	app = express();
 
 function start() {
-	app.use( bodyParser.urlencoded({ extended: true}));
-	app.use( bodyParser.json() );
-	
-	view(app);
-	data(app);
-	
-	var port = (process.env.PORT) ? process.env.PORT  : config.port;
-	app.listen(port);
-	console.log( 'PickUp Server is running on port: ' + port );
+	var port = (process.env.PORT) ? process.env.PORT  : config.serverport;
+
+	app.listen(port, function() {
+		app.use(bodyParser.json() );
+		app.all('/API/REST/*', [require('./auth/authenticate')]);
+		
+		viewRouter.init(app);
+		accountRouter.init(app);
+		
+		//setup RESTFUL service routes below
+		
+		console.log('PickUp Server running on port: ' + port );
+	});
+
 };
 
-module.exports = start;
+exports.start = start;

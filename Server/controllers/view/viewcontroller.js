@@ -1,4 +1,4 @@
-var viewController = {
+var controller = {
 	'home' : function( req, res ) {
 		res.send('PickUp app server');
 	},
@@ -7,4 +7,4 @@ var viewController = {
 	}
 };
 
-module.exports = viewController;
+module.exports = controller;

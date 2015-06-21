@@ -1,3 +1,3 @@
-var pickup = require('./Server');
+var pickup = require('./server');
 
-pickup();
+pickup.start();
