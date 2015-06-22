@@ -1,13 +1,10 @@
 var paths = require('../paths'),
-	root = paths.root,
-	config = require(root + '/config'),
-	databaseURL = process.env.MONGOLAB_URI || config.domain+':'+config.dbport + '/' + config.pickupdb,
-	mongojs = require("mongojs"),
-	db = mongojs( databaseURL ),
+	dbclient = require(paths.database + '/client'),
 	userFactory = require(paths.model + '/user');
 	
 var data_accounts = {
 	'loginUser': function(userObj, facebookuser, callback) {
+		var db = dbclient.get(); 
 		var users = db.collection('users');
 		
 		users.findOne({email: userObj.email, password: userObj.password, facebookuser: facebookuser}, function(err, found) {
@@ -23,6 +20,7 @@ var data_accounts = {
 		});
 	},
 	'registerUser': function(userObj, callback) {
+		var db = dbclient.get();
 		var newuser = userFactory.create(userObj);
 		
 		var users = db.collection('users');
@@ -36,6 +34,7 @@ var data_accounts = {
 		});	
 	},
 	'emailExists': function(useremail, facebookuser, callback ) {
+		var db = dbclient.get();
 		var users = db.collection('users');
 		
 		users.findOne({email: useremail, facebookuser: facebookuser}, function( err, found ) {

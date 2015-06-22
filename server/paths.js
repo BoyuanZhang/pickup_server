@@ -7,7 +7,8 @@ var paths = {
 	service: root + '/server/service',
 	datahandler: root + '/server/datahandler',
 	model: root + '/server/model',
-	security: root + '/server/security'
+	security: root + '/server/security',
+	database: root + '/server/database'
 };
 
 module.exports = paths;
