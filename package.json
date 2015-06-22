@@ -4,7 +4,8 @@
 	"version": "1.0.0",
 	"dependencies": {
 		"express": "4.*",
-		"body-parser" : "*",
-		"mongojs": "*"
+		"body-parser": "*",
+		"mongojs": "*",
+		"jwt-simple": "*"
 	}
 }

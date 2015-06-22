@@ -1,6 +1,7 @@
 var paths = require('../../paths'),
 	adhandler = require(paths.datahandler + '/accounts'),
-	accutil = require('./util/accountutil');
+	accutil = require('./util/accountutil'),
+	auth = require(paths.security + '/auth');
 
 function handleBadRequest(res) {
 	res.statusCode = 400;
@@ -20,8 +21,15 @@ var controller = {
 			var ret = {}; 
 			if(!exists) {
 				adhandler.registerUser(registerObj, function(success) {
-					ret.userCreated = success;
-					res.json(ret);
+					if(success) {
+						ret.userCreated = success;
+						ret.authtoken = auth.generateToken(registerObj.email);
+						res.json(ret);
+					}
+					else {
+						ret.userCreated = false;
+						res.json(ret);
+					}
 				});
 			}
 			else {
@@ -35,11 +43,14 @@ var controller = {
 			handleBadRequest(res);
 			return;
 		}
-		var facebookuser = (req.body.facebookuser) ? true : false;
-		adhandler.loginUser(req.body, facebookuser, function(authenticated) {
+		
+		var loginObj = req.body;
+		var facebookuser = (loginObj.facebookuser) ? true : false;
+		adhandler.loginUser(loginObj, facebookuser, function(authenticated) {
 			var ret = {}; 
 			if(authenticated) {
 				ret.authenticated = true;
+				ret.authtoken = auth.generateToken(loginObj.email);
 				res.json(ret);
 			}
 			else {
