@@ -6,6 +6,7 @@ var express = require('express'),
 	migrator = require('./migration/migrate'),
 	dbclient = require('./database/client'),
 	amqclient = require('./messagequeue/client'),
+	mqmanager = require('./messagequeue/mqmanager');
 	app = express();
 
 function start() {
@@ -43,7 +44,11 @@ function dbinit() {
 
 function armqinit() {
 	amqclient.setupClient(function(success) {
-		if(!success)
+		if(success) {
+			console.log('Connection to RabbitMQ established.');
+			mqmanager.setup();
+		}	
+		else
 			console.log('Connection could not be established to RabbitMQ.');	
 	});
 }

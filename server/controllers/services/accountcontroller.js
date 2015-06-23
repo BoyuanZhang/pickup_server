@@ -7,7 +7,7 @@ function handleBadRequest(res) {
 	res.statusCode = 400;
 	res.end();
 }
-	
+
 var controller = {
 	'signup': function(req, res) {
 		if(!accutil.validateRegisterReq(req.body)) {
