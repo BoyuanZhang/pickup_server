@@ -8,7 +8,8 @@ var paths = {
 	datahandler: root + '/server/datahandler',
 	model: root + '/server/model',
 	security: root + '/server/security',
-	database: root + '/server/database'
+	database: root + '/server/database',
+	messagequeue: root + '/server/messagequeue'
 };
 
 module.exports = paths;

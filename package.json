@@ -6,6 +6,7 @@
 		"express": "4.*",
 		"body-parser": "*",
 		"mongojs": "*",
-		"jwt-simple": "*"
+		"jwt-simple": "*",
+		"amqplib": "*"
 	}
 }
