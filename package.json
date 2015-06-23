@@ -5,7 +5,7 @@
 	"dependencies": {
 		"express": "4.*",
 		"body-parser": "*",
-		"mongojs": "*",
+		"mongojs": "0.15.1",
 		"jwt-simple": "*",
 		"amqplib": "*"
 	}
