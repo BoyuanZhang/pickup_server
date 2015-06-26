@@ -16,7 +16,7 @@ var controller = {
 		}
 		
 		registerObj = req.body;
-		var facebookuser = (req.body.facebookuser) ? true : false;
+		var facebookuser = (req.body.facebookuser) ? registerObj.facebookuser : 'false';
 		adhandler.emailExists(registerObj.email, facebookuser, function(exists) {
 			var ret = {}; 
 			if(!exists) {
@@ -45,7 +45,7 @@ var controller = {
 		}
 		
 		var loginObj = req.body;
-		var facebookuser = (loginObj.facebookuser) ? true : false;
+		var facebookuser = (loginObj.facebookuser) ? loginObj.facebookuser : 'false';
 		adhandler.loginUser(loginObj, facebookuser, function(authenticated) {
 			var ret = {}; 
 			if(authenticated) {
@@ -60,12 +60,12 @@ var controller = {
 		});
 	},
 	'emailexist': function(req, res) {
-		if(!req.body.email) {
+		if(!accutil.validateExistReq(req.body)) {
 			handleBadRequest(res);
 			return;
 		}
 		
-		var facebookuser = (req.body.facebookuser) ? true : false;
+		var facebookuser = (req.body.facebookuser) ? req.body.facebookuser : 'false';
 		adhandler.emailExists(req.body.email, facebookuser, function(exists) { 
 			if(exists) 
 				res.json( {'exists': 'true'});
