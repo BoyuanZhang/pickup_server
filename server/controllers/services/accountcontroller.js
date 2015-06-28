@@ -23,7 +23,7 @@ var controller = {
 				adhandler.registerUser(registerObj, function(success) {
 					if(success) {
 						ret.userCreated = success;
-						ret.authtoken = auth.generateToken(registerObj.email);
+						ret.authtoken = auth.generateToken(registerObj.email, facebookuser);
 						res.json(ret);
 					}
 					else {
@@ -50,7 +50,7 @@ var controller = {
 			var ret = {}; 
 			if(authenticated) {
 				ret.authenticated = true;
-				ret.authtoken = auth.generateToken(loginObj.email);
+				ret.authtoken = auth.generateToken(loginObj.email, facebookuser);
 				res.json(ret);
 			}
 			else {
