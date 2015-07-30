@@ -22,7 +22,7 @@ var auth = {
 		var token = jwt.encode(createTokenContent(email), secrets.authsecret);
 		return token;
 	},
-	validateToken: function(email, token) {
+	validateToken: function(email, token, facebookuser) {
 		if(facebookuser === 'true')
 			email = createFBPadEmail(email);	
 
