@@ -3,7 +3,7 @@ var userFactory = {
 		var user = {};
 		user.email = userObj.email;
 		user.username = userObj.username;
-		user.facebookuser = (userObj.facebookuser) ? true : false;
+		user.facebookuser = (userObj.facebookuser) ? 'true' : 'false';
 		user.password = userObj.password;
 
 		return user;

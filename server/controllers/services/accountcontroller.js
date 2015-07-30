@@ -1,7 +1,8 @@
 var paths = require('../../paths'),
 	adhandler = require(paths.datahandler + '/accounts'),
 	accutil = require('./util/accountutil'),
-	auth = require(paths.security + '/auth');
+	auth = require(paths.security + '/auth'),
+	responseservice = require(paths.service + '/response/responseservice');
 
 function handleBadRequest(res) {
 	res.statusCode = 400;
@@ -18,22 +19,25 @@ var controller = {
 		registerObj = req.body;
 		var facebookuser = (req.body.facebookuser) ? registerObj.facebookuser : 'false';
 		adhandler.emailExists(registerObj.email, facebookuser, function(exists) {
-			var ret = {}; 
+			var data = {}, ret;
 			if(!exists) {
 				adhandler.registerUser(registerObj, function(success) {
 					if(success) {
-						ret.userCreated = success;
-						ret.authtoken = auth.generateToken(registerObj.email, facebookuser);
+						data.userCreated = success;
+						data.authtoken = auth.generateToken(registerObj.email, facebookuser);
+						ret = responseservice.buildBasicResponse(data);
 						res.json(ret);
 					}
 					else {
-						ret.userCreated = false;
+						data.userCreated = false;
+						ret = responseservice.buildBasicResponse(data);
 						res.json(ret);
 					}
 				});
 			}
 			else {
-				ret.userCreated = false;
+				data.userCreated = false;
+				ret = responseservice.buildBasicResponse(data);
 				res.json(ret);
 			}
 		});
@@ -47,14 +51,16 @@ var controller = {
 		var loginObj = req.body;
 		var facebookuser = (loginObj.facebookuser) ? loginObj.facebookuser : 'false';
 		adhandler.loginUser(loginObj, facebookuser, function(authenticated) {
-			var ret = {}; 
+			var data = {}, ret;
 			if(authenticated) {
-				ret.authenticated = true;
-				ret.authtoken = auth.generateToken(loginObj.email, facebookuser);
+				data.authenticated = true;
+				data.authtoken = auth.generateToken(loginObj.email, facebookuser);
+				ret = responseservice.buildBasicResponse(data);
 				res.json(ret);
 			}
 			else {
-				ret.authenticated = false;
+				data.authenticated = false;
+				ret = responseservice.buildBasicResponse(data);
 				res.json(ret);
 			}
 		});
@@ -67,10 +73,17 @@ var controller = {
 		
 		var facebookuser = (req.body.facebookuser) ? req.body.facebookuser : 'false';
 		adhandler.emailExists(req.body.email, facebookuser, function(exists) { 
-			if(exists) 
-				res.json( {'exists': 'true'});
-			else 
-				res.json({'exists':'false'});
+			var data = {}, ret;	
+			if(exists) {
+				data.exists = true;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
+			else {
+				data.exists = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
 		});		
 	}
 };
