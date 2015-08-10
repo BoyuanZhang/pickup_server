@@ -3,6 +3,7 @@ var express = require('express'),
 	config = require('../config'),
 	viewRouter = require('./routes/views/view'),
 	accountRouter = require('./routes/services/account'),
+	locationRouter = require('./routes/services/location'),
 	dbclient = require('./database/client'),
 	migrator = require('./database/migration/migrate'),
 	amqclient = require('./messagequeue/client'),
@@ -23,6 +24,7 @@ function start() {
 		
 		viewRouter.init(app);
 		accountRouter.init(app);
+		locationRouter.init(app);
 		
 		//setup RESTFUL service routes below
 		
