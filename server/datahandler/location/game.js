@@ -1,4 +1,4 @@
-var paths = require('../paths'),
+var paths = require('../../paths'),
 	dbclient = require(paths.database + '/client');
 
 var data_games = {
