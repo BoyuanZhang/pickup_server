@@ -1,6 +1,6 @@
 var paths = require('../../paths'),
-	ldhandler = require(paths.datahandler + '/location'),
-	locutil = require('./util/locationutil'),
+	gdhandler = require(paths.datahandler + '/location/game'),
+	gameutil = require('./util/location/gameutil'),
 	responseservice = require(paths.service + '/response/responseservice');
 
 function handleBadRequest(res) {
@@ -9,8 +9,8 @@ function handleBadRequest(res) {
 }
 
 var controller = {
-	'update': function(req, res) {
-		if(!locutil.validateLocationUpdate(req.body)) {
+	'create': function(req, res) {
+		if(!gameutil.validateGameCreate(req.body)) {
 			handleBadRequest(res);
 			return;
 		}
