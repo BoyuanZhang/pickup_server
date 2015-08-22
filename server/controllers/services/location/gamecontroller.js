@@ -23,10 +23,6 @@ var controller = {
 		createObj.creator = fbPrefixStr + userContext.email;
 
 		gdhandler.isCreateAllowed(createObj.creator, createObj.game, function(allowed) {
-			if(allowed)
-				console.log("MURICA");
-			else
-				console.log("FML");
 		});
 
 		res.end();
