@@ -4,8 +4,7 @@ var paths = require('../paths'),
 	
 var data_accounts = {
 	'loginUser': function(userObj, facebookuser, callback) {
-		var db = dbclient.get(); 
-		var users = db.collection('users');
+		var db = dbclient.get(), users = db.collection('users');
 		
 		users.findOne({email: userObj.email, password: userObj.password, facebookuser: facebookuser}, function(err, found) {
 			if( err ) {
@@ -20,8 +19,7 @@ var data_accounts = {
 		});
 	},
 	'registerUser': function(userObj, callback) {
-		var db = dbclient.get();
-		var newuser = userFactory.create(userObj);
+		var db = dbclient.get(), newuser = userFactory.create(userObj);
 		
 		var users = db.collection('users');
 		users.save( newuser, function( err, saved) {
@@ -34,8 +32,7 @@ var data_accounts = {
 		});	
 	},
 	'emailExists': function(useremail, facebookuser, callback ) {
-		var db = dbclient.get();
-		var users = db.collection('users');
+		var db = dbclient.get(), users = db.collection('users');
 		
 		users.findOne({email: useremail, facebookuser: facebookuser}, function( err, found ) {
 			if( err ) {
