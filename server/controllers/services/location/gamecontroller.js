@@ -18,11 +18,32 @@ var controller = {
 
 		var createObj = req.body, 
 			userContext = sessionHandler.getUserContext(req),
+			//[BZ] TODO: abstract this fbPrefixStr so we can use it across the server
 			fbPrefixStr = (userContext.facebookuser) ? "fbusr-" : "usr-"; 
 
 		createObj.creator = fbPrefixStr + userContext.email;
 
 		gdhandler.isCreateAllowed(createObj.creator, createObj.game, function(allowed) {
+			var data = {}, ret;
+			if(allowed) {
+				gdhandler.createGame(createObj, function(success) {
+					if(success) {
+						data.gameCreated = true;
+						ret = responseservice.buildBasicResponse(data);
+						res.json(ret);	
+					}
+					else {
+						data.gameCreated = false;
+						ret = responseservice.buildBasicResponse(data);
+						res.json(ret);						
+					}
+				})
+			}
+			else {
+				data.gameCreated = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
 		});
 
 		res.end();

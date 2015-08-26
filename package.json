@@ -7,6 +7,7 @@
 		"body-parser": "*",
 		"mongojs": "0.15.1",
 		"jwt-simple": "*",
-		"amqplib": "*"
+		"amqplib": "*",
+		"socket.io": "~1.3.6"
 	}
 }

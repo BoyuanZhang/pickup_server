@@ -19,9 +19,8 @@ var data_accounts = {
 		});
 	},
 	'registerUser': function(userObj, callback) {
-		var db = dbclient.get(), newuser = userFactory.create(userObj);
+		var db = dbclient.get(), newuser = userFactory.create(userObj), users = db.collection('users');
 		
-		var users = db.collection('users');
 		users.save( newuser, function( err, saved) {
 			if( err || !saved ) {
 				callback(false);
