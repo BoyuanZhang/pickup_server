@@ -11,7 +11,7 @@ function handleBadRequest(res) {
 
 var controller = {
 	'create': function(req, res) {
-		if(!gameutil.validateGameCreate(req.body)) {
+		if(!gameutil.validateGameReq(req.body)) {
 			handleBadRequest(res);
 			return;
 		}
@@ -45,8 +45,28 @@ var controller = {
 				res.json(ret);
 			}
 		});
+	},
 
-		res.end();
+	'find': function(req, res) {
+		if(!gameutil.validateGameFind(req.body)) {
+			handleBadRequest(res);
+			return;
+		}
+
+		var data = {}, ret;
+		gdhandler.findGames(req.body, function(success, elements) {
+			if(success) {
+				data.gamesFound = true;
+				data.games = elements;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
+			else {
+				data.gamesFound = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
+		});
 	}
 };
 

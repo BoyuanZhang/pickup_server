@@ -23,7 +23,6 @@ var data_games = {
 
 	'createGame': function(gameObj, callback) {
 		var db = dbclient.get(), newgame = gameFactory.create(gameObj), games = db.collection('games');
-
 		games.save(newgame, function(err, saved) {
 			if( err || !saved ) {
 				callback(false);
@@ -32,6 +31,34 @@ var data_games = {
 				callback(true);
 			}
 		});
+	},
+
+	'findGames': function(gameQueryObj, callback) {
+		var db = dbclient.get(), gameQuery = gameFactory.createFind(gameQueryObj), games = db.collection('games');
+
+		games.find({ 
+					location: 
+					{ 
+						$near: 
+						{
+							$geometry: 
+							{
+								type: "Point", 
+								coordinates: [gameQuery.location[0], gameQuery.location[1]]
+							},
+							//[BZ] TODO: for now distance is hard-coded to km and converted to meters
+							$maxDistance: gameQuery.radius * 1000
+						}
+					}
+				}, function(err, docs) {
+					if(err) {
+						callback(false);
+					}
+					else {
+						console.log(docs);
+						callback(true, docs);
+					}
+				})
 	}
 };
 
