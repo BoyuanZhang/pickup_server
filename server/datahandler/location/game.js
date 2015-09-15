@@ -55,7 +55,6 @@ var data_games = {
 						callback(false);
 					}
 					else {
-						console.log(docs);
 						callback(true, docs);
 					}
 				})

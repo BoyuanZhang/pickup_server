@@ -55,7 +55,7 @@ var controller = {
 
 		var data = {}, ret;
 		gdhandler.findGames(req.body, function(success, elements) {
-			if(success) {
+			if(success && elements && elements.length > 0) {
 				data.gamesFound = true;
 				data.games = elements;
 				ret = responseservice.buildBasicResponse(data);
