@@ -10,9 +10,6 @@ var gameFactory = {
 
 	createFind: function(gameObj){
 		var gameQuery = {}, loc = gameObj.location;
-		if(gameObj.game)
-			gameQuery.game = gameObj.game;
-
 		gameQuery.location = [parseFloat(loc.longitude), parseFloat(loc.latitude)];
 		gameQuery.radius = parseFloat(gameObj.radius);
 
