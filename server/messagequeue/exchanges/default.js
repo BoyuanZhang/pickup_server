@@ -9,6 +9,9 @@ module.exports = {
 			if(err) {
 				console.log('Default exchange not created, error: ' + err);
 			}
+			else if(ok) {
+				console.log('Default exchange setup!');
+			}
 		});
 	}
 }

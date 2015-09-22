@@ -24,6 +24,9 @@ module.exports = {
 					console.log('Default queue not bound to channel, error: ' + err);
 					return;
 				}
+				else if(ok) {
+					console.log('Default queue setup!');
+				}
 				ch.consume(queue, defaultMessagecb, {noAck: true}, function(err) {
 					if(err) console.log('Consumer not set up for default queue, error: ' + err);
 				});				

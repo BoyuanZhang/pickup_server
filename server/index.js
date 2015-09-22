@@ -7,7 +7,8 @@ var express = require('express'),
 	dbclient = require('./database/client'),
 	migrator = require('./database/migration/migrate'),
 	amqclient = require('./messagequeue/client'),
-	mqmanager = require('./messagequeue/mqmanager');
+	mqmanager = require('./messagequeue/mqmanager'),
+	chatio = require('./chat/chatmanager'),
 	app = express();
 
 function start() {
@@ -17,8 +18,8 @@ function start() {
 	dbinit();
 	//establish connection to, and initialize rabbit mq
 	armqinit();
-	
-	app.listen(port, function() {
+
+	var server = app.listen(port, function() {
 		app.use(bodyParser.json() );
 		app.all('/API/REST/*', [require('./auth/authenticate')]);
 		
@@ -30,6 +31,9 @@ function start() {
 		
 		console.log('PickUp Server running on port: ' + port );
 	});
+
+	//Initialize socket event listener/handler
+	chatio.setup(server);
 };
 
 function dbinit() {
