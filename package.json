@@ -8,6 +8,7 @@
 		"mongojs": "0.15.1",
 		"jwt-simple": "*",
 		"amqplib": "*",
-		"socket.io": "~1.3.6"
+		"socket.io": "~1.3.6",
+		"node-uuid": "*"
 	}
 }

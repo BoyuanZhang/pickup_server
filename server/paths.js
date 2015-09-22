@@ -9,7 +9,8 @@ var paths = {
 	model: root + '/server/model',
 	security: root + '/server/security',
 	database: root + '/server/database',
-	messagequeue: root + '/server/messagequeue'
+	messagequeue: root + '/server/messagequeue',
+	chat: root + '/server/chat'
 };
 
 module.exports = paths;
