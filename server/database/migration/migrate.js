@@ -3,11 +3,12 @@ var paths = require('../../paths'),
 	
 //migrations
 var users = require('./migrations/users'),
-	games = require('./migrations/games');
+	games = require('./migrations/games'),
+	lobby = require('./migrations/lobby');
 
 function migrate() {
 	var db = dbclient.get();
-	var migrationArray = [users, games];
+	var migrationArray = [users, games, lobby];
 	if(!db) {
 		console.log("Could not connect to db, migrations not run.");
 		return;

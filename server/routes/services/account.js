@@ -1,5 +1,5 @@
 var paths = require('../../paths'),
-	controller = require(paths.controllers + '/services/accountcontroller');
+	controller = require(paths.controllers + '/services/account/accountcontroller');
 
 function init(app){
 	app.post('/services/account/signup', controller.signup);

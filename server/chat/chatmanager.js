@@ -2,6 +2,7 @@ var paths = require('../paths'),
 	socketio = require('socket.io'),
 	usermanager = require(paths.chat + '/users/usermanager'),
 	lobbymanager = require(paths.chat + '/lobby/lobbymanager'),
+	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
 	io = null;
 
 //chatmanager manages all clients
