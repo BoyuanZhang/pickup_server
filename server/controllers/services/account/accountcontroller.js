@@ -2,17 +2,13 @@ var paths = require('../../../paths'),
 	adhandler = require(paths.datahandler + '/accounts'),
 	accutil = require('../util/accountutil'),
 	auth = require(paths.security + '/auth'),
-	responseservice = require(paths.service + '/response/responseservice');
-
-function handleBadRequest(res) {
-	res.statusCode = 400;
-	res.end();
-}
+	responseservice = require(paths.service + '/response/responseservice'),
+	responsehelper = require(paths.controllers + '/services/helper/responsehelper');
 
 var controller = {
 	'signup': function(req, res) {
 		if(!accutil.validateRegisterReq(req.body)) {
-			handleBadRequest(res);
+			responsehelper.handleBadRequest(res);
 			return;
 		}
 		
@@ -44,7 +40,7 @@ var controller = {
 	},
 	'login': function(req, res) {
 		if(!accutil.validateLoginReq(req.body)) {
-			handleBadRequest(res);
+			responsehelper.handleBadRequest(res);
 			return;
 		}
 		
@@ -67,7 +63,7 @@ var controller = {
 	},
 	'emailexist': function(req, res) {
 		if(!accutil.validateExistReq(req.body)) {
-			handleBadRequest(res);
+			responsehelper.handleBadRequest(res);
 			return;
 		}
 		

@@ -2,17 +2,13 @@ var paths = require('../../../paths'),
 	gdhandler = require(paths.datahandler + '/location/game'),
 	gameutil = require('../util/location/gameutil'),
 	sessionHandler = require(paths.security + '/sessionhandler'),
-	responseservice = require(paths.service + '/response/responseservice');
-
-function handleBadRequest(res) {
-	res.statusCode = 400;
-	res.end();
-}
+	responseservice = require(paths.service + '/response/responseservice'),
+	responsehelper = require(paths.controllers + '/services/helper/responsehelper');
 
 var controller = {
 	'create': function(req, res) {
 		if(!gameutil.validateGameReq(req.body)) {
-			handleBadRequest(res);
+			responsehelper.handleBadRequest(res);
 			return;
 		}
 
@@ -49,7 +45,7 @@ var controller = {
 
 	'find': function(req, res) {
 		if(!gameutil.validateGameFind(req.body)) {
-			handleBadRequest(res);
+			responsehelper.handleBadRequest(res);
 			return;
 		}
 
