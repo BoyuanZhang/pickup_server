@@ -1,6 +1,5 @@
 var paths = require('../../paths'),
 	dbclient = require(paths.database + '/client'),
-	responseservice = require(paths.service + '/response/responseservice'),
 	gameFactory = require(paths.model + '/game');
 
 var data_games = {

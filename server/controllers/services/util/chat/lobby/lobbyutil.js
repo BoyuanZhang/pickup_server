@@ -1,6 +1,6 @@
 var lobbyutil = {
-	validateJoin: function(lobby) {
-		if(lobby.id)
+	validateExist: function(lobby) {
+		if(lobby.lobbyId)
 			return true;
 			
 		return false;

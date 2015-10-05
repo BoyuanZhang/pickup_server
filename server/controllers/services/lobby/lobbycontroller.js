@@ -1,12 +1,31 @@
 var paths = require('../../../paths'),
 	lobbyutil = require(paths.controllers + '/services/util/chat/lobby/lobbyutil'),
+	ldhandler = require(paths.datahandler + '/lobby/lobby'),
 	responseservice = require(paths.service + '/response/responseservice'),
 	responsehelper = require(paths.controllers + '/services/helper/responsehelper');
 
 
 var controller = {
 	'lobbyExists': function(req, res) {
-		res.end();
+		var reqBody = req.body;
+		if(!lobbyutil.validateExist(reqBody)) {
+			responsehelper.handleBadRequest(res);
+			return;
+		}
+
+		var lobbyId = reqBody.lobbyId;
+		ldhandler.lobbyExists(lobbyId, function(exists) {
+			var data = {}, ret;
+			if(exists) {
+				data.lobbyExists = true;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);	
+			} else {
+				data.lobbyExists = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);						
+			}
+		});
 	},
 	'createLobby': function(req, res) {
 		res.end();
