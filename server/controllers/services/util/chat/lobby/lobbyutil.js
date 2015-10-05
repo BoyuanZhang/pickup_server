@@ -4,6 +4,12 @@ var lobbyutil = {
 			return true;
 			
 		return false;
+	},
+	validateCreate: function(lobby) {
+		if(lobby.lobbyId && lobby.creatorEmail && lobby.gameType)
+			return true;
+
+		return false;
 	}
 }
 

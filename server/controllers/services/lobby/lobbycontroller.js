@@ -28,6 +28,33 @@ var controller = {
 		});
 	},
 	'createLobby': function(req, res) {
+		var reqBody = req.body;
+		if(!lobbyutil.validateCreate(reqBody)) {
+			responsehelper.handleBadRequest(res);
+			return;
+		}
+
+		ldhandler.lobbyExists(reqBody.lobbyId, function(exists) {
+			var data = {}, ret;
+			if(exists) {
+				ldhandler.createLobby(reqBody, function(success) {
+					if(success) {
+						data.lobbyCreated = true;
+						ret = responseservice.buildBasicResponse(data);
+						res.json(ret);	
+					} else {
+						data.lobbyCreated = false;
+						ret = responseservice.buildBasicResponse(data);
+						res.json(ret);							
+					}
+				})
+			} else {
+				data.lobbyCreated = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);						
+			}
+		});
+
 		res.end();
 	},
 	'getLobbyChat': function(req, res) {

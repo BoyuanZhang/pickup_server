@@ -19,6 +19,17 @@ var data_lobby = {
 			}
 		});
 	},
+	'createLobby': function(lobby, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby'), newLobby = lobbyFactory.create(lobby);
+		lobby.save(newLobby, function(err, saved) {
+			if( err || !saved ) {
+				callback(false);
+			}
+			else {
+				callback(true);
+			}
+		});
+	}
 };
 
 module.exports = data_lobby;
