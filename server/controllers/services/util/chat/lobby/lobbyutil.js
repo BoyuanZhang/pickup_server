@@ -10,6 +10,12 @@ var lobbyutil = {
 			return true;
 
 		return false;
+	},
+	validateFetch: function(lobby) {
+		if(lobby.lobbyId)
+			return true;
+
+		return false;
 	}
 }
 

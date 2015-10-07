@@ -13,8 +13,7 @@ var data_lobby = {
 			//[BZ] TODO: the count here 2 is hard-coded, and should be replaced with a config constant value in the future
 			else if( count > 0) {
 				callback(true);
-			}
-			else {
+			} else {
 				callback(false);
 			}
 		});
@@ -24,9 +23,19 @@ var data_lobby = {
 		lobby.save(newLobby, function(err, saved) {
 			if( err || !saved ) {
 				callback(false);
-			}
-			else {
+			} else {
 				callback(true);
+			}
+		});
+	},
+	'fetchChat': function(lobbyId, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.findOne({lobbyId: lobbyId}, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true, doc);
 			}
 		});
 	}

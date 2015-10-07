@@ -57,8 +57,27 @@ var controller = {
 
 		res.end();
 	},
-	'getLobbyChat': function(req, res) {
-		res.end();
+	'fetchChat': function(req, res) {
+		var reqBody = req.body;
+		if(!lobbyutil.validateFetch(reqBody)) {
+			responsehelper.handleBadRequest(res);
+			return;
+		}
+
+		var lobbyId = reqBody.lobbyId;
+		ldhandler.fetchChat(lobbyId, function(success, element) {
+			var data = {}, ret;
+			if(success && element) {
+				data.fetchSuccess = true;
+				data.chatLog = element.chatLog;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);	
+			} else {
+				data.fetchSuccess = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);						
+			}
+		});
 	}
 };
 
