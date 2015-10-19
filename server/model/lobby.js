@@ -6,7 +6,7 @@ var lobbyFactory = {
 		lobby.lobbyId = lobbyObj.lobbyId;
 		lobby.creatorEmail = lobbyObj.creatorEmail,
 		lobby.createDate = timestamp;
-		lobby.chatLog = "";
+		lobby.chatLog = [];
 
 		return lobby;
 	}

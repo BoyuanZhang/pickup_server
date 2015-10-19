@@ -1,6 +1,7 @@
 var paths = require('../../paths'),
 	dbclient = require(paths.database + '/client'),
-	lobbyFactory = require(paths.model + '/lobby');
+	lobbyFactory = require(paths.model + '/lobby'),
+	chatConfig = require(paths.chat + '/config/config');
 
 var data_lobby = {
 	'lobbyExists': function(lobbyId, callback) {
@@ -38,6 +39,29 @@ var data_lobby = {
 				callback(true, doc);
 			}
 		});
+	},
+	'updateChat': function(lobbyId, msg, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby'), maxMessages = chatConfig.maxMessages;
+
+		lobby.update( 
+			{
+				lobbyId: lobbyId
+			}, 
+			{
+				$push:{
+					chatLog: {
+						$each: [msg],
+						$slice: maxMessages
+					}
+				}
+			} 
+			, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true, doc);
+			}
+		})
 	}
 };
 
