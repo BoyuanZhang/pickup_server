@@ -3,6 +3,7 @@ var paths = require('../paths'),
 	usermanager = require(paths.chat + '/users/usermanager'),
 	lobbymanager = require(paths.chat + '/lobby/lobbymanager'),
 	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
+	chatutil = require(paths.chat + '/util/chatutil'),
 	io = null;
 
 //chatmanager manages all clients
@@ -14,6 +15,10 @@ var chatmanager = {
 
 		io.on("connection", function(client) {
 			client.on("joinLobby", function(user, lobby) {
+			});
+			client.on("send", function(user, msg) {
+			});
+			client.on("disconnect", function(user) {
 			});
 		});
 	}	

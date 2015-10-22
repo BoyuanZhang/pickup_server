@@ -59,7 +59,7 @@ var data_lobby = {
 			if(err) {
 				callback(false);
 			} else {
-				callback(true, doc);
+				callback(true);
 			}
 		})
 	}

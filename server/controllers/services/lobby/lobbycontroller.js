@@ -78,6 +78,31 @@ var controller = {
 				res.json(ret);						
 			}
 		});
+	},
+	'exists': function(lobbyId, callback) {
+		if(!lobbyId) {
+			callback(false);
+		}
+		ldhandler.lobbyExists(lobbyId, function(exists) {
+			if(exists) {
+				callback(true);
+			} else {
+				callback(false);						
+			}
+		});
+	},
+	'updateChat': function(lobbyId, msg, callback) {
+		if(!lobbyutil.validateUpdate(lobbyId, msg)) {
+			callback(false);
+		}
+
+		ldhandler.updateChat(lobbyId, msg, function(success) {
+			if(success) {
+				callback(true);
+			} else {
+				callback(false);
+			}
+		})
 	}
 };
 

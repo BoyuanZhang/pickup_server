@@ -16,6 +16,12 @@ var lobbyutil = {
 			return true;
 
 		return false;
+	},
+	validateUpdate: function(lobbyId, msg) {
+		if(lobbyId && msg)
+			return true;
+
+		return false;
 	}
 }
 
