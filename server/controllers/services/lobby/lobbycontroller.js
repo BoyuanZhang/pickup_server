@@ -14,7 +14,7 @@ var controller = {
 		}
 
 		var lobbyId = reqBody.lobbyId;
-		ldhandler.lobbyExists(lobbyId, function(exists) {
+		this.exists(lobbyId, function(exists) {
 			var data = {}, ret;
 			if(exists) {
 				data.lobbyExists = true;
