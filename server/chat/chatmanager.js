@@ -22,7 +22,7 @@ var chatmanager = {
 				}
 
 				var lobbyId = lobby.lobbyId;
-				if(lobbycontroller.exists(lobbyId, function(exists) {
+				lobbycontroller.exists(lobbyId, function(exists) {
 					if(exists) {
 						lobbymanager.joinLobby(lobbyId, user);
 						client.join(lobbyId);
@@ -30,7 +30,7 @@ var chatmanager = {
 					else {
 						client.emit('message', resbuilder.buildJoinMsg('error', 'Lobby with id: ' + lobbyId + ' does not exist'));
 					}
-				}))
+				});
 			});
 			client.on("send", function(user, msg) {
 			});
