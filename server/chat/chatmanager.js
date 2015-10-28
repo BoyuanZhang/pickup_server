@@ -7,9 +7,6 @@ var paths = require('../paths'),
 	resbuilder = require(paths.chat + '/response/builder'),
 	io = null;
 
-//chatmanager manages all clients
-var clients = {};
-
 var chatmanager = {
 	setup: function(server){
 		io = socketio(server);
@@ -24,20 +21,27 @@ var chatmanager = {
 				var lobbyId = lobby.lobbyId;
 				lobbycontroller.exists(lobbyId, function(exists) {
 					if(exists) {
-						lobbymanager.joinLobby(lobbyId, user);
-						client.join(lobbyId);
+						lobbymanager.joinLobby(lobbyId, user, function(joined) {
+							if(joined) {
+								client.join(lobbyId);
+							} else {
+								client.emit('message', resbuilder.buildJoinMsg('error', 'Could not join lobby with id: ' + lobbyId));
+							}
+						});
 					}
 					else {
 						client.emit('message', resbuilder.buildJoinMsg('error', 'Lobby with id: ' + lobbyId + ' does not exist'));
 					}
 				});
 			});
-			client.on("send", function(user, msg) {
+
+			client.on("send", function(user, lobby, msg) {
 			});
-			client.on("disconnect", function(user) {
+			
+			client.on("disconnect", function(user, lobby) {
 			});
 		});
-	}	
+	},
 };
 
 module.exports = chatmanager;

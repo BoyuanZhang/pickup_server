@@ -84,11 +84,7 @@ var controller = {
 			callback(false);
 		}
 		ldhandler.lobbyExists(lobbyId, function(exists) {
-			if(exists) {
-				callback(true);
-			} else {
-				callback(false);						
-			}
+			callback(exists);
 		});
 	},
 	'updateChat': function(lobbyId, msg, callback) {
@@ -97,11 +93,16 @@ var controller = {
 		}
 
 		ldhandler.updateChat(lobbyId, msg, function(success) {
-			if(success) {
-				callback(true);
-			} else {
-				callback(false);
-			}
+			callback(success);
+		})
+	},
+	'joinLobby': function(lobbyId, email, callback) {
+		if(!lobbyutil.validateJoin(lobbyId, email)) {
+			callback(false);
+		}
+
+		ldhandler.joinLobby(lobbyId, email, function(success) {
+			callback(success);
 		})
 	}
 };

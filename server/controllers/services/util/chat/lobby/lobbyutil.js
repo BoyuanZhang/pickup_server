@@ -22,6 +22,12 @@ var lobbyutil = {
 			return true;
 
 		return false;
+	},
+	validateJoin: function(lobbyId, email) {
+		if(lobbyId && email)
+			return true;
+
+		return false;
 	}
 }
 

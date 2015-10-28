@@ -62,6 +62,27 @@ var data_lobby = {
 				callback(true);
 			}
 		})
+	},
+	'joinLobby': function(lobbyId, email, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.update(
+			{
+				lobbyId: lobbyId
+			},
+			{
+				$addToSet: {
+					users: email
+				}
+			}
+			, function(err, doc) {
+				if(err) {
+					callback(false);
+				} else {
+					callback(true);
+				}
+			}
+		)
 	}
 };
 
