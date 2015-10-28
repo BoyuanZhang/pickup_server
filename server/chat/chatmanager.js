@@ -1,8 +1,6 @@
 var paths = require('../paths'),
 	socketio = require('socket.io'),
-	usermanager = require(paths.chat + '/users/usermanager'),
 	lobbymanager = require(paths.chat + '/lobby/lobbymanager'),
-	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
 	chatutil = require(paths.chat + '/util/chatutil'),
 	resbuilder = require(paths.chat + '/response/builder'),
 	io = null;
@@ -19,26 +17,28 @@ var chatmanager = {
 				}
 
 				var lobbyId = lobby.lobbyId;
-				lobbycontroller.exists(lobbyId, function(exists) {
-					if(exists) {
-						lobbymanager.joinLobby(lobbyId, user, function(joined) {
-							if(joined) {
-								client.join(lobbyId);
-							} else {
-								client.emit('message', resbuilder.buildJoinMsg('error', 'Could not join lobby with id: ' + lobbyId));
-							}
-						});
-					}
-					else {
-						client.emit('message', resbuilder.buildJoinMsg('error', 'Lobby with id: ' + lobbyId + ' does not exist'));
+				lobbymanager.joinLobby(lobbyId, user, function(joined) {
+					if(joined) {
+						client.join(lobbyId);
+					} else {
+						client.emit('message', resbuilder.buildJoinMsg('error', 'Could not join lobby with id: ' + lobbyId));
 					}
 				});
 			});
 
 			client.on("send", function(user, lobbyId, msg) {
-			});
+				if(!chatutil.validateSend(user, lobbyId, msg)) {
+					client.emit('message', resbuilder.buildJoinMsg('error', 'Invalid request send message'));
+					return;					
+				}
 
-			client.on("disconnect", function(user, lobbyId) {
+				lobbymanager.emitToLobby(user.email, lobbyId, msg, function(emitSuccess) {
+					if(emitSuccess) {
+						io.sockets.in(lobbyId).emit('roomMessage', resbuilder.buildBroadcastMsg('broadcast', msg));
+					} else {
+						client.emit('message', resbuilder.buildJoinMsg('error', 'Could not send message: ' + msg + ', to lobby with id: ' + lobbyId));
+					}
+				});
 			});
 		});
 	},

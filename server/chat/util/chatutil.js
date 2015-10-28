@@ -7,6 +7,15 @@ var chatutil = {
 			return true;
 			
 		return false;
+	},
+	validateSend: function(user, lobbyId, msg) {
+		if(!lobbyId || !user || !msg)
+			return false;
+
+		if(user.email)
+			return true;
+
+		return false;
 	}
 }
 

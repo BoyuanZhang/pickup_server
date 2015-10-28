@@ -83,6 +83,21 @@ var data_lobby = {
 				}
 			}
 		)
+	},
+	'findLobby': function(lobbyId, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.findOne({lobbyId: lobbyId}, function(err, lobby) {
+			if( err ) {
+				callback(false);
+			}
+			else if( lobby ) {
+				callback(true, lobby);
+			}
+			else {
+				callback(false);
+			}
+		});
 	}
 };
 

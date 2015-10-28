@@ -96,6 +96,26 @@ var controller = {
 			callback(success);
 		})
 	},
+	'userInLobby': function(lobbyId, email, callback) {
+		if(!lobbyutil.validateUserInLobby(lobbyId, email)) {
+			callback(false);
+		}
+
+		ldhandler.findLobby(lobbyId, function(success, result) {
+			if(!success || !result || !result.users) {
+				callback(false);
+				return;
+			}
+
+			var users = result.users;
+
+			if(users.indexOf(email) > -1) {
+				callback(true);
+			} else {
+				callback(false);
+			}
+		});
+	},
 	'joinLobby': function(lobbyId, email, callback) {
 		if(!lobbyutil.validateJoin(lobbyId, email)) {
 			callback(false);

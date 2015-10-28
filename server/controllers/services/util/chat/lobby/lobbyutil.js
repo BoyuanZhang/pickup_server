@@ -23,6 +23,12 @@ var lobbyutil = {
 
 		return false;
 	},
+	validateUserInLobby: function(lobbyId, email) {
+		if(lobbyId && msg)
+			return true;
+
+		return false;
+	},
 	validateJoin: function(lobbyId, email) {
 		if(lobbyId && email)
 			return true;
