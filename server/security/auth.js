@@ -10,24 +10,23 @@ function createTokenContent(email) {
 		return content;
 }
 
-function createFBPadEmail(email) {
-	return email + secrets.fbemailpad;
-}
-
 var auth = {
 	generateToken: function(email, facebookuser) {
 		if(facebookuser === 'true')
-			email = createFBPadEmail(email);
+			email = this.createFBPadEmail(email);
 		
 		var token = jwt.encode(createTokenContent(email), secrets.authsecret);
 		return token;
 	},
 	validateToken: function(email, token, facebookuser) {
 		if(facebookuser === 'true')
-			email = createFBPadEmail(email);	
+			email = this.createFBPadEmail(email);	
 
 		var expectedContent = createTokenContent(email);
 		return (expectedContent == jwt.decode(token, secrets.authsecret));
+	},
+	createFBPadEmail: function(email) {
+		return email + secrets.fbemailpad;
 	}
 }
 

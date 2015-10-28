@@ -35,10 +35,10 @@ var chatmanager = {
 				});
 			});
 
-			client.on("send", function(user, lobby, msg) {
+			client.on("send", function(user, lobbyId, msg) {
 			});
-			
-			client.on("disconnect", function(user, lobby) {
+
+			client.on("disconnect", function(user, lobbyId) {
 			});
 		});
 	},
