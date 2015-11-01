@@ -3,6 +3,7 @@ var paths = require('../../../paths'),
 	ldhandler = require(paths.datahandler + '/lobby/lobby'),
 	responseservice = require(paths.service + '/response/responseservice'),
 	responsehelper = require(paths.controllers + '/services/helper/responsehelper'),
+	accountcontroller = require(paths.controllers + '/services/account/accountcontroller'),
 	auth = require(paths.security + '/auth');
 
 
@@ -15,9 +16,9 @@ var controller = {
 		}
 
 		var lobbyId = reqBody.lobbyId;
-		this.exists(lobbyId, function(exists) {
+		this.exists(lobbyId, function(exists, err) {
 			var data = {}, ret;
-			if(exists) {
+			if(!exists && !err) {
 				data.lobbyExists = true;
 			} else {
 				data.lobbyExists = false;					
@@ -117,8 +118,8 @@ var controller = {
 		if(!lobbyId) {
 			callback(false);
 		}
-		ldhandler.lobbyExists(lobbyId, function(exists) {
-			callback(exists);
+		ldhandler.lobbyExists(lobbyId, function(exists, err) {
+			callback(exists, err);
 		});
 	},
 	'updateChat': function(lobbyId, msg, callback) {

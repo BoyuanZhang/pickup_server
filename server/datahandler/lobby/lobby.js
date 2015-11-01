@@ -9,7 +9,7 @@ var data_lobby = {
 
 		lobby.count({lobbyId: lobbyId}, function(err, count) {
 			if( err ) {
-				callback(false);
+				callback(false, err);
 			}
 			//[BZ] TODO: the count here 2 is hard-coded, and should be replaced with a config constant value in the future
 			else if( count > 0) {
@@ -112,7 +112,7 @@ var data_lobby = {
 					callback(true);
 				}
 			}
-		)
+		);
 	},
 	'findLobby': function(lobbyId, callback) {
 		var db = dbclient.get(), lobby = db.collection('lobby');

@@ -5,6 +5,7 @@ var userFactory = {
 		user.username = userObj.username;
 		user.facebookuser = (userObj.facebookuser) ? 'true' : 'false';
 		user.password = userObj.password;
+		user.lobbies = [];
 
 		return user;
 	}

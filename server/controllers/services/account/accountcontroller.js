@@ -1,5 +1,5 @@
 var paths = require('../../../paths'),
-	adhandler = require(paths.datahandler + '/accounts'),
+	adhandler = require(paths.datahandler + '/account/accounts'),
 	accutil = require('../util/accountutil'),
 	auth = require(paths.security + '/auth'),
 	responseservice = require(paths.service + '/response/responseservice'),
@@ -21,14 +21,12 @@ var controller = {
 					if(success) {
 						data.userCreated = success;
 						data.authtoken = auth.generateToken(registerObj.email, facebookuser);
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);
 					}
 					else {
 						data.userCreated = false;
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);
 					}
+					ret = responseservice.buildBasicResponse(data);
+					res.json(ret);
 				});
 			}
 			else {
@@ -51,14 +49,12 @@ var controller = {
 			if(authenticated) {
 				data.authenticated = true;
 				data.authtoken = auth.generateToken(loginObj.email, facebookuser);
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
 			else {
 				data.authenticated = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
 		});
 	},
 	'emailexist': function(req, res) {
@@ -72,15 +68,48 @@ var controller = {
 			var data = {}, ret;	
 			if(exists) {
 				data.exists = true;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
 			else {
 				data.exists = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
 		});		
+	},
+	'findLobbies': function(req, res) {
+		var userEmail = auth.getUserEmailFromQuery(req.query);
+
+		adhandler.findAccount(userEmail, function(success, doc) {
+			var data = {}, ret;	
+			if(success && doc) {
+				data.found = true;
+				data.lobbies = doc.lobbies;
+			} else {
+				data.found = false;
+			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		}) 
+	},
+	'addLobby': function(userEmail, lobbyId, callback) {
+		if(!accutil.validateAddLobby(userEmail, lobbyId)) {
+			callback(false);
+			return;
+		}
+
+		adhandler.addLobby(userEmail, lobbyId, function(success) {
+			callback(success);
+		});
+	},
+	'removeLobby': function(userEmail, lobbyId, callback) {
+		if(!accutil.validateRemoveLobby(userEmail, lobbyId)) {
+			callback(false);
+			return;
+		}
+
+		adhandler.removeLobby(userEmail, lobbyId, function(success) {
+			callback(success);
+		});
 	}
 };
 

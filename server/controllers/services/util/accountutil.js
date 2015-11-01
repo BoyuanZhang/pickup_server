@@ -24,6 +24,18 @@ var accountutil = {
 		}
 		
 		return false;
+	},
+	validateAddLobby: function(useremail, lobbyId) {
+		if(useremail && lobbyId)
+			return true;
+
+		return false;
+	},
+	validateRemoveLobby: function(useremail, lobbyId) {
+		if(useremail && lobbyId)
+			return true;
+
+		return false;
 	}
 }
 

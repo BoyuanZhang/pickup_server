@@ -1,4 +1,4 @@
-var paths = require('../paths'),
+var paths = require('../../paths'),
 	dbclient = require(paths.database + '/client'),
 	userFactory = require(paths.model + '/user');
 	
@@ -43,6 +43,44 @@ var data_accounts = {
 			else {
 				callback(false);
 			}
+		});
+	},
+	'addLobby': function(useremail, lobbyId, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+
+		users.update( 
+			{
+				email: useremail
+			}, 
+			{
+				$addToSet: {
+					lobbies: lobbyId
+				}
+			} 
+			, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});		
+	},
+	'removeLobby': function(useremail, lobbyId, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+		lobby.update( 
+			{
+				email: useremail
+			},
+			{
+				$pull: {
+					lobbies: lobbyId
+				}
+			}, function(err, doc) {
+				if(err) {
+					callback(false);
+				} else {
+					callback(true);
+				}
 		});
 	}
 };
