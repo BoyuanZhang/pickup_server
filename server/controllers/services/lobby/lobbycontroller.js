@@ -2,7 +2,8 @@ var paths = require('../../../paths'),
 	lobbyutil = require(paths.controllers + '/services/util/chat/lobby/lobbyutil'),
 	ldhandler = require(paths.datahandler + '/lobby/lobby'),
 	responseservice = require(paths.service + '/response/responseservice'),
-	responsehelper = require(paths.controllers + '/services/helper/responsehelper');
+	responsehelper = require(paths.controllers + '/services/helper/responsehelper'),
+	auth = require(paths.security + '/auth');
 
 
 var controller = {
@@ -18,13 +19,11 @@ var controller = {
 			var data = {}, ret;
 			if(exists) {
 				data.lobbyExists = true;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);	
 			} else {
-				data.lobbyExists = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);						
+				data.lobbyExists = false;					
 			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);	
 		});
 	},
 	'createLobby': function(req, res) {
@@ -40,18 +39,16 @@ var controller = {
 				ldhandler.createLobby(reqBody, function(success) {
 					if(success) {
 						data.lobbyCreated = true;
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);	
 					} else {
-						data.lobbyCreated = false;
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);							
+						data.lobbyCreated = false;						
 					}
+					ret = responseservice.buildBasicResponse(data);
+					res.json(ret);	
 				})
 			} else {
 				data.lobbyCreated = false;
 				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);						
+				res.json(ret);		
 			}
 		});
 
@@ -70,13 +67,50 @@ var controller = {
 			if(success && element) {
 				data.fetchSuccess = true;
 				data.chatLog = element.chatLog;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);	
 			} else {
-				data.fetchSuccess = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);						
+				data.fetchSuccess = false;	
 			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);		
+		});
+	},
+	'destroyLobby': function(req, res) {
+		var reqBody = req.body, reqQuery = req.query;
+		if(!lobbyutil.validateDestroy(reqBody, reqQuery)) {
+			responsehelper.handleBadRequest(res);
+			return;
+		}
+		var lobbyId = reqBody.lobbyId, 
+			creatorEmail = auth.getUserEmailFromQuery(reqQuery);
+
+		ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
+			if(destroyed) {
+				data.lobbyDestroyed = true;
+			} else {
+				data.lobbyDestroyed = false;
+			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		});
+	},
+	'leaveLobby': function(req, res) {
+		var reqBody = req.body, reqQuery = req.query;
+		if(!lobbyutil.validateLeave(reqBody, reqQuery)) {
+			responsehelper.handleBadRequest(res);
+			return;
+		}
+
+		var lobbyId = reqBody.lobbyId, userEmail = auth.getUserEmailFromQuery(reqQuery);
+
+		ldhandler.leaveLobby(lobbyId, userEmail, function(left) {
+			var data = {}, ret;
+			if(left) {
+				data.leftLobby = true;
+			} else {
+				data.leftLobby = false;
+			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
 		});
 	},
 	'exists': function(lobbyId, callback) {

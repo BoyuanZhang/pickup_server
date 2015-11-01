@@ -27,6 +27,18 @@ var auth = {
 	},
 	createFBPadEmail: function(email) {
 		return email + secrets.fbemailpad;
+	},
+	getUserEmailFromQuery: function(query) {
+		var facebookuser = query.facebookuser ? query.facebookuser : false;
+
+		if(!query.email) return null;
+
+		if(facebookuser) {
+			return this.createFBPadEmail(query.email);
+		}
+		else { 
+			return query.email;
+		}
 	}
 }
 

@@ -17,6 +17,24 @@ var lobbyutil = {
 
 		return false;
 	},
+	validateDestroy: function(Lobby, reqQuery) {
+		if(!Lobby || !reqQuery)
+			return false;
+
+		if(Lobby.lobbyId && reqQuery.email)
+			return true;
+
+		return false;
+	},
+	validateLeave: function(Lobby, reqQuery) {
+		if(!Lobby || !reqQuery)
+			return false;
+
+		if(Lobby.lobbyId && reqQuery.email)
+			return true;
+
+		return false;
+	},
 	validateUpdate: function(lobbyId, msg) {
 		if(lobbyId && msg)
 			return true;

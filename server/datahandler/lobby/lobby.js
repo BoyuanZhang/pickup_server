@@ -40,6 +40,36 @@ var data_lobby = {
 			}
 		});
 	},
+	'destroyChat': function(lobbyId, creatorEmail, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.remove( {lobbyId: lobbyId, creatorEmail: creatorEmail}, true, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		})
+	},
+	'leaveLobby': function(lobbyId, email, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.update( 
+			{
+				lobbyId: lobbyId
+			},
+			{
+				$pull: {
+					users: email
+				}
+			}, function(err, doc) {
+				if(err) {
+					callback(false);
+				} else {
+					callback(true);
+				}
+		})
+	},
 	'updateChat': function(lobbyId, msg, callback) {
 		var db = dbclient.get(), lobby = db.collection('lobby'), maxMessages = chatConfig.maxMessages;
 
@@ -48,7 +78,7 @@ var data_lobby = {
 				lobbyId: lobbyId
 			}, 
 			{
-				$push:{
+				$push: {
 					chatLog: {
 						$each: [msg],
 						$slice: maxMessages
