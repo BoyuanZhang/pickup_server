@@ -39,6 +39,11 @@ var controller = {
 			if(exists) {
 				ldhandler.createLobby(reqBody, function(success) {
 					if(success) {
+						accountcontroller.addLobby(reqBody.creatorEmail, reqBody.lobbyId, function(joined) {
+							if(!joined) {
+								//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+							}
+						});
 						data.lobbyCreated = true;
 					} else {
 						data.lobbyCreated = false;						
@@ -86,6 +91,11 @@ var controller = {
 
 		ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
 			if(destroyed) {
+				accountcontroller.removeLobby(creatorEmail, lobbyId, function(removed) {
+					if(!removed) {
+						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+					}
+				});
 				data.lobbyDestroyed = true;
 			} else {
 				data.lobbyDestroyed = false;
@@ -106,6 +116,11 @@ var controller = {
 		ldhandler.leaveLobby(lobbyId, userEmail, function(left) {
 			var data = {}, ret;
 			if(left) {
+				accountcontroller.removeLobby(userEmail, lobbyId, function(removed) {
+					if(!removed) {
+						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+					}
+				});
 				data.leftLobby = true;
 			} else {
 				data.leftLobby = false;
@@ -157,7 +172,14 @@ var controller = {
 		}
 
 		ldhandler.joinLobby(lobbyId, email, function(success) {
-			callback(success);
+			if(success) {
+				var cb = callback;
+				accountcontroller.addLobby(email, lobbyId, function(joined) {
+					cb(joined);
+				})
+			} else {
+				callback(false);
+			}
 		})
 	}
 };
