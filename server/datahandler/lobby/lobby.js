@@ -11,7 +11,6 @@ var data_lobby = {
 			if( err ) {
 				callback(false, err);
 			}
-			//[BZ] TODO: the count here 2 is hard-coded, and should be replaced with a config constant value in the future
 			else if( count > 0) {
 				callback(true);
 			} else {
@@ -19,8 +18,8 @@ var data_lobby = {
 			}
 		});
 	},
-	'createLobby': function(lobby, callback) {
-		var db = dbclient.get(), lobby = db.collection('lobby'), newLobby = lobbyFactory.create(lobby);
+	'createLobby': function(creatorEmail, lobby, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby'), newLobby = lobbyFactory.create(creatorEmail, lobby);
 		lobby.save(newLobby, function(err, saved) {
 			if( err || !saved ) {
 				callback(false);

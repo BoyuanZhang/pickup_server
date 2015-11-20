@@ -34,12 +34,13 @@ var controller = {
 			return;
 		}
 
+		var creatorEmail = auth.getUserEmailFromQuery(req.query);
 		ldhandler.lobbyExists(reqBody.lobbyId, function(exists) {
 			var data = {}, ret;
 			if(exists) {
-				ldhandler.createLobby(reqBody, function(success) {
+				ldhandler.createLobby(creatorEmail, reqBody, function(success) {
 					if(success) {
-						accountcontroller.addLobby(reqBody.creatorEmail, reqBody.lobbyId, function(joined) {
+						accountcontroller.addLobby(creatorEmail, reqBody.lobbyId, function(joined) {
 							if(!joined) {
 								//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
 							}
@@ -78,30 +79,6 @@ var controller = {
 			}
 			ret = responseservice.buildBasicResponse(data);
 			res.json(ret);		
-		});
-	},
-	'destroyLobby': function(req, res) {
-		var reqBody = req.body, reqQuery = req.query;
-		if(!lobbyutil.validateDestroy(reqBody, reqQuery)) {
-			responsehelper.handleBadRequest(res);
-			return;
-		}
-		var lobbyId = reqBody.lobbyId, 
-			creatorEmail = auth.getUserEmailFromQuery(reqQuery);
-
-		ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
-			if(destroyed) {
-				accountcontroller.removeLobby(creatorEmail, lobbyId, function(removed) {
-					if(!removed) {
-						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
-					}
-				});
-				data.lobbyDestroyed = true;
-			} else {
-				data.lobbyDestroyed = false;
-			}
-			ret = responseservice.buildBasicResponse(data);
-			res.json(ret);
 		});
 	},
 	'leaveLobby': function(req, res) {
@@ -166,7 +143,7 @@ var controller = {
 			}
 		});
 	},
-	'joinLobby': function(lobbyId, email, callback) {
+	'joinLobby': function(email, lobbyId, callback) {
 		if(!lobbyutil.validateJoin(lobbyId, email)) {
 			callback(false);
 		}
@@ -181,7 +158,25 @@ var controller = {
 				callback(false);
 			}
 		})
-	}
+	},
+	'destroyLobby': function(lobbyId, creatorEmail, callback) {
+		if(!lobbyutil.validateDestroy(lobbyId, creatorEmail)) {
+			callback(false);
+		}
+
+		ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
+			if(destroyed) {
+				accountcontroller.removeLobby(creatorEmail, lobbyId, function(removed) {
+					if(!removed) {
+						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+					}
+				});
+				callback(true);
+			} else {
+				callback(false);
+			}
+		});
+	},
 };
 
 module.exports = controller;

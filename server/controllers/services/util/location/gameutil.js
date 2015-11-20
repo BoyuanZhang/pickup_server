@@ -38,6 +38,13 @@ var gameutil = {
 			return true;
 
 		return false;
+	},
+
+	validateDestroy: function(body) {
+		if(body.gameId)
+			return true;
+
+		return false;
 	}
 };
 

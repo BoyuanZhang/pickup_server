@@ -6,7 +6,7 @@ var lobbyutil = {
 		return false;
 	},
 	validateCreate: function(lobby) {
-		if(lobby.lobbyId && lobby.creatorEmail && lobby.gameType)
+		if(lobby.lobbyId && lobby.gameType)
 			return true;
 
 		return false;
@@ -17,14 +17,11 @@ var lobbyutil = {
 
 		return false;
 	},
-	validateDestroy: function(Lobby, reqQuery) {
-		if(!Lobby || !reqQuery)
+	validateDestroy: function(lobbyId, creatorEmail) {
+		if(!lobbyId || !creatorEmail)
 			return false;
 
-		if(Lobby.lobbyId && reqQuery.email)
-			return true;
-
-		return false;
+		return true;
 	},
 	validateLeave: function(Lobby, reqQuery) {
 		if(!Lobby || !reqQuery)

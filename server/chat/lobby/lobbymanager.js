@@ -1,14 +1,16 @@
 var paths = require('../../paths'),
-	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller');
+	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
+	auth = require(paths.security + '/auth');
 
 //Connected user object
 var lobbies = {};
 
 var lobbymanager = {
-	joinLobby: function(lobbyId, user, callback) {
+	joinLobby: function(email, facebookUser, lobbyId, callback) {
 		lobbycontroller.exists(lobbyId, function(exists) {
 			if(exists) {
-				lobbycontroller.joinLobby(lobbyId, user, function(joined) {
+				var userEmail = (facebookUser) ? auth.createFBPadEmail(email) : email;
+				lobbycontroller.joinLobby(lobbyId, userEmail, function(joined) {
 					callback(joined);
 				});
 			}
@@ -17,8 +19,9 @@ var lobbymanager = {
 			}
 		});
 	},
-	emitToLobby: function(email, lobbyId, msg, callback) {
-		lobbycontroller.userInLobby(lobbyId, email, function(inLobby) {
+	emitToLobby: function(email, facebookUser, lobbyId, msg, callback) {
+		var userEmail = (facebookUser) ? auth.createFBPadEmail(email) : email;
+		lobbycontroller.userInLobby(lobbyId, userEmail, function(inLobby) {
 			if(inLobby) {
 				lobbycontroller.updateChat(lobbyId, msg, function(success) {
 					callback(success);

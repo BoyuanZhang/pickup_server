@@ -1,6 +1,6 @@
 var paths = require('../../../paths'),
 	adhandler = require(paths.datahandler + '/account/accounts'),
-	accutil = require('../util/accountutil'),
+	accutil = require('../util/account/accountutil'),
 	auth = require(paths.security + '/auth'),
 	responseservice = require(paths.service + '/response/responseservice'),
 	responsehelper = require(paths.controllers + '/services/helper/responsehelper');

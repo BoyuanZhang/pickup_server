@@ -3,10 +3,10 @@ var paths = require('../../paths'),
 	gameFactory = require(paths.model + '/game');
 
 var data_games = {
-	'isCreateAllowed': function(creator, game, callback) {
+	'isCreateAllowed': function(creatorEmail, game, callback) {
 		var db = dbclient.get(), games = db.collection('games');
 
-		games.count({creator: creator, game: game}, function(err, count) {
+		games.count({creatorEmail: creatorEmail, game: game}, function(err, count) {
 			if( err ) {
 				callback(false);
 			}
@@ -20,8 +20,8 @@ var data_games = {
 		});
 	},
 
-	'createGame': function(gameObj, callback) {
-		var db = dbclient.get(), newgame = gameFactory.create(gameObj), games = db.collection('games');
+	'createGame': function(creatorEmail, gameObj, callback) {
+		var db = dbclient.get(), newgame = gameFactory.create(creatorEmail, gameObj), games = db.collection('games');
 		games.save(newgame, function(err, saved) {
 			if( err || !saved ) {
 				callback(false);
@@ -57,6 +57,18 @@ var data_games = {
 						callback(true, docs);
 					}
 				})
+	},
+
+	'destroyGame': function(gameId, creatorEmail, callback) {
+		var db = dbclient.get(), games = db.collection('games');
+
+		games.remove( {gameId: gameId, creatorEmail: creatorEmail}, true, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		})
 	}
 };
 

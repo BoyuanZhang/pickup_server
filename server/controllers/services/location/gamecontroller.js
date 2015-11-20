@@ -3,7 +3,9 @@ var paths = require('../../../paths'),
 	gameutil = require('../util/location/gameutil'),
 	sessionHandler = require(paths.security + '/sessionhandler'),
 	responseservice = require(paths.service + '/response/responseservice'),
-	responsehelper = require(paths.controllers + '/services/helper/responsehelper');
+	responsehelper = require(paths.controllers + '/services/helper/responsehelper'),
+	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
+	auth = require(paths.security + '/auth');
 
 var controller = {
 	'create': function(req, res) {
@@ -14,26 +16,21 @@ var controller = {
 
 		var createObj = req.body, 
 			userContext = sessionHandler.getUserContext(req),
-			//[BZ] TODO: abstract this fbPrefixStr so we can use it across the server
-			fbPrefixStr = (userContext.facebookuser) ? "fbusr-" : "usr-"; 
+			creatorEmail = auth.getUserEmailFromQuery(req.query);
 
-		createObj.creator = fbPrefixStr + userContext.email;
-
-		gdhandler.isCreateAllowed(createObj.creator, createObj.game, function(allowed) {
+		gdhandler.isCreateAllowed(creatorEmail, createObj.game, function(allowed) {
 			var data = {}, ret;
 			if(allowed) {
-				gdhandler.createGame(createObj, function(success) {
+				gdhandler.createGame(creatorEmail, createObj, function(success) {
 					if(success) {
 						data.gameCreated = true;
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);	
 					}
 					else {
-						data.gameCreated = false;
-						ret = responseservice.buildBasicResponse(data);
-						res.json(ret);						
+						data.gameCreated = false;					
 					}
-				})
+					ret = responseservice.buildBasicResponse(data);
+					res.json(ret);	
+				});
 			}
 			else {
 				data.gameCreated = false;
@@ -54,14 +51,37 @@ var controller = {
 			if(success && elements && elements.length > 0) {
 				data.gamesFound = true;
 				data.games = elements;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
 			else {
 				data.gamesFound = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);
 			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		});
+	},
+
+	'destroy': function(req, res) {
+		if(!gameutil.validateDestroy(req.body)) {
+			responsehelper.handleBadRequest(res);
+			return;			
+		}
+
+		var data = {}, ret, gameId = req.body.gameId, creatorEmail = auth.getUserEmailFromQuery();
+		gdhandler.destroyGame(gameId, creatorEmail, function(success) {
+			if(success) {
+				data.gameDestroyed = true;
+				lobbycontroller.destroyLobby(gameId, creatorEmail, function(destroyed) {
+					if(!destroyed) {
+						//[BZ] TODO: if lobby was not deleted we should error handle this somehow.
+					}
+				});
+			}
+			else {
+				data.gameDestroyed = false;
+			}
+
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
 		});
 	}
 };
