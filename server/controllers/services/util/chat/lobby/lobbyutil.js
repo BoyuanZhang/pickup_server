@@ -5,8 +5,8 @@ var lobbyutil = {
 			
 		return false;
 	},
-	validateCreate: function(lobby) {
-		if(lobby.lobbyId && lobby.gameType)
+	validateCreate: function(lobbyId, creatorEmail) {
+		if(lobbyId && creatorEmail)
 			return true;
 
 		return false;

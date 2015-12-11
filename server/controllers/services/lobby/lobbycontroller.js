@@ -27,40 +27,6 @@ var controller = {
 			res.json(ret);	
 		});
 	},
-	'createLobby': function(req, res) {
-		var reqBody = req.body;
-		if(!lobbyutil.validateCreate(reqBody)) {
-			responsehelper.handleBadRequest(res);
-			return;
-		}
-
-		var creatorEmail = auth.getUserEmailFromQuery(req.query);
-		ldhandler.lobbyExists(reqBody.lobbyId, function(exists) {
-			var data = {}, ret;
-			if(exists) {
-				ldhandler.createLobby(creatorEmail, reqBody, function(success) {
-					if(success) {
-						accountcontroller.addLobby(creatorEmail, reqBody.lobbyId, function(joined) {
-							if(!joined) {
-								//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
-							}
-						});
-						data.lobbyCreated = true;
-					} else {
-						data.lobbyCreated = false;						
-					}
-					ret = responseservice.buildBasicResponse(data);
-					res.json(ret);	
-				})
-			} else {
-				data.lobbyCreated = false;
-				ret = responseservice.buildBasicResponse(data);
-				res.json(ret);		
-			}
-		});
-
-		res.end();
-	},
 	'fetchChat': function(req, res) {
 		var reqBody = req.body;
 		if(!lobbyutil.validateFetch(reqBody)) {
@@ -104,6 +70,32 @@ var controller = {
 			}
 			ret = responseservice.buildBasicResponse(data);
 			res.json(ret);
+		});
+	},
+	'createLobby': function(lobbyId, creatorEmail, callback) {
+		var reqBody = req.body;
+		if(!lobbyutil.validateCreate(lobbyId, creatorEmail)) {
+			callback(false);
+			return;
+		}
+
+		ldhandler.lobbyExists(lobbyId, function(exists) {
+			if(!exists) {
+				ldhandler.createLobby(lobbyId, creatorEmail, function(success) {
+					if(success) {
+						accountcontroller.addLobby(creatorEmail, lobbyId, function(joined) {
+							if(!joined) {
+								//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+							}
+						});
+						callback(true);
+					} else {
+						callback(false);					
+					}	
+				})
+			} else {
+				callback(false);	
+			}
 		});
 	},
 	'exists': function(lobbyId, callback) {
@@ -152,8 +144,11 @@ var controller = {
 			if(success) {
 				var cb = callback;
 				accountcontroller.addLobby(email, lobbyId, function(joined) {
-					cb(joined);
+					if(!joined) {
+						//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
+					}
 				})
+				callback(true);
 			} else {
 				callback(false);
 			}

@@ -18,8 +18,8 @@ var data_lobby = {
 			}
 		});
 	},
-	'createLobby': function(creatorEmail, lobby, callback) {
-		var db = dbclient.get(), lobby = db.collection('lobby'), newLobby = lobbyFactory.create(creatorEmail, lobby);
+	'createLobby': function(lobbyId, creatorEmail, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby'), newLobby = lobbyFactory.create(lobbyId, creatorEmail);
 		lobby.save(newLobby, function(err, saved) {
 			if( err || !saved ) {
 				callback(false);

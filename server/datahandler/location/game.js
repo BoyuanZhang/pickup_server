@@ -27,7 +27,7 @@ var data_games = {
 				callback(false);
 			}
 			else {
-				callback(true);
+				callback(true, newgame);
 			}
 		});
 	},

@@ -1,7 +1,6 @@
 var paths = require('../../../paths'),
 	gdhandler = require(paths.datahandler + '/location/game'),
 	gameutil = require('../util/location/gameutil'),
-	sessionHandler = require(paths.security + '/sessionhandler'),
 	responseservice = require(paths.service + '/response/responseservice'),
 	responsehelper = require(paths.controllers + '/services/helper/responsehelper'),
 	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
@@ -14,15 +13,21 @@ var controller = {
 			return;
 		}
 
-		var createObj = req.body, 
-			userContext = sessionHandler.getUserContext(req),
-			creatorEmail = auth.getUserEmailFromQuery(req.query);
+		var createObj = req.body, creatorEmail = auth.getUserEmailFromQuery(req.query);
 
 		gdhandler.isCreateAllowed(creatorEmail, createObj.game, function(allowed) {
 			var data = {}, ret;
 			if(allowed) {
-				gdhandler.createGame(creatorEmail, createObj, function(success) {
-					if(success) {
+				gdhandler.createGame(creatorEmail, createObj, function(success, gameObj) {
+					if(success && gameObj) {
+						data.gameCreated = true;
+						lobbycontroller.createLobby(gameObj.gameId, creatorEmail, function(created) {
+							if(!created) {
+								//[BZ] TODO: Lobby could not be created, this situation needs to be handled somehow
+							}
+						});
+					} else if(success) {
+						//[BZ] TODO: Game object was not returned by mongo, needs to be handled somehow
 						data.gameCreated = true;
 					}
 					else {
