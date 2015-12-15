@@ -77,9 +77,8 @@ var controller = {
 		});		
 	},
 	'findLobbies': function(req, res) {
-		var userEmail = auth.getUserEmailFromQuery(req.query);
-
-		adhandler.findAccount(userEmail, function(success, doc) {
+		var query = req.query, userEmail = auth.getEmailFromQuery(query), facebookuser = auth.getFacebookUserFromQuery(query);
+		adhandler.findAccount(userEmail, facebookuser, function(success, doc) {
 			var data = {}, ret;	
 			if(success && doc) {
 				data.found = true;
@@ -89,7 +88,7 @@ var controller = {
 			}
 			ret = responseservice.buildBasicResponse(data);
 			res.json(ret);
-		}) 
+		});
 	},
 	'addLobby': function(userEmail, lobbyId, callback) {
 		if(!accutil.validateAddLobby(userEmail, lobbyId)) {

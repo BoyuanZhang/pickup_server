@@ -23,13 +23,11 @@ function start() {
 	var server = app.listen(port, function() {
 		app.use(bodyParser.json() );
 		app.all('/API/REST/*', [require('./auth/authenticate')]);
-		
-		viewRouter.init(app);
+
 		accountRouter.init(app);
 		locationRouter.init(app);
 		lobbyRouter.init(app);
-		
-		//setup RESTFUL service routes below
+		viewRouter.init(app);
 		
 		console.log('PickUp Server running on port: ' + port );
 	});

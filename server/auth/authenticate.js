@@ -12,8 +12,9 @@ function authenticate(req, res, next) {
 
 	facebookuser = query.facebookuser ? query.facebookuser : false;
 
-	if( auth.validateToken(query.email, query.authtoken, facebookuser))
-		next();
+	if( auth.validateToken(query.email, query.authtoken, facebookuser)) {
+		console.log(next());
+	}
 	else {
 		res.statusCode = 403;
 		res.end();
@@ -24,7 +25,7 @@ function validateReq(query) {
 	if(!query || !query.email || !query.authtoken)
 		return false;
 
-	if(query.facebookuser && (query.facebookuser !== 'true' || query.facebookuser !== 'false'))
+	if(query.facebookuser && (query.facebookuser === true || query.facebookuser === false))
 		return false;
 
 	return true;

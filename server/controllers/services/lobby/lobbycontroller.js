@@ -54,7 +54,7 @@ var controller = {
 			return;
 		}
 
-		var lobbyId = reqBody.lobbyId, userEmail = auth.getUserEmailFromQuery(reqQuery);
+		var lobbyId = reqBody.lobbyId, userEmail = auth.getPaddedEmailFromQuery(reqQuery);
 
 		ldhandler.leaveLobby(lobbyId, userEmail, function(left) {
 			var data = {}, ret;

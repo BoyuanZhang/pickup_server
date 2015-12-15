@@ -18,6 +18,22 @@ var data_accounts = {
 			}
 		});
 	},
+	'findAccount': function(userEmail, facebookuser, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+		facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
+
+		users.findOne({email: userEmail, facebookuser: facebookuser}, function(err, found) {
+			if( err ) {
+				callback(false);
+			}
+			else if( found ) {
+				callback(true, found);
+			}
+			else {
+				callback(false);
+			}
+		});		
+	},
 	'registerUser': function(userObj, callback) {
 		var db = dbclient.get(), newuser = userFactory.create(userObj), users = db.collection('users');
 		

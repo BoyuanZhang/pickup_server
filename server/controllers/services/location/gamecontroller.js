@@ -13,7 +13,7 @@ var controller = {
 			return;
 		}
 
-		var createObj = req.body, creatorEmail = auth.getUserEmailFromQuery(req.query);
+		var createObj = req.body, creatorEmail = auth.getPaddedEmailFromQuery(req.query);
 
 		gdhandler.isCreateAllowed(creatorEmail, createObj.game, function(allowed) {
 			var data = {}, ret;
@@ -71,7 +71,7 @@ var controller = {
 			return;			
 		}
 
-		var data = {}, ret, gameId = req.body.gameId, creatorEmail = auth.getUserEmailFromQuery();
+		var data = {}, ret, gameId = req.body.gameId, creatorEmail = auth.getPaddedEmailFromQuery();
 		gdhandler.destroyGame(gameId, creatorEmail, function(success) {
 			if(success) {
 				data.gameDestroyed = true;
