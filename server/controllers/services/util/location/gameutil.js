@@ -22,7 +22,7 @@ function validRadius(num){
 }
 
 var gameutil = {
-	validateGameReq: function(body) {
+	validateGameCreate: function(body) {
 		if(body.game && body.location) {
 			var location = body.location;
 			if(validLat(location.latitude) && validLng(location.longitude))

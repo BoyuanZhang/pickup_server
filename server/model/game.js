@@ -3,7 +3,7 @@ var paths = require('../paths'),
 
 var gameFactory = {
 	create: function(creatorEmail, gameObj){
-		var game = {}, loc = gameObj.location, timestamp = Date.now(), gameId = gameUtil.generateId(gameObj.creator, timestamp, gameObj.game);
+		var game = {}, loc = gameObj.location, timestamp = Date.now(), gameId = gameUtil.generateId(creatorEmail, timestamp, gameObj.game);
 
 		game.game = gameObj.game;
 		game.gameId = gameId;

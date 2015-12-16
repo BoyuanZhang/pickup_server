@@ -90,13 +90,13 @@ var controller = {
 			res.json(ret);
 		});
 	},
-	'addLobby': function(userEmail, lobbyId, callback) {
-		if(!accutil.validateAddLobby(userEmail, lobbyId)) {
+	'addLobby': function(lobbyId, userEmail, facebookuser, callback) {
+		if(!accutil.validateAddLobby(lobbyId, userEmail, facebookuser)) {
 			callback(false);
 			return;
 		}
 
-		adhandler.addLobby(userEmail, lobbyId, function(success) {
+		adhandler.addLobby(lobbyId, userEmail, facebookuser, function(success) {
 			callback(success);
 		});
 	},

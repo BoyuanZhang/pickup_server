@@ -13,7 +13,7 @@ function authenticate(req, res, next) {
 	facebookuser = query.facebookuser ? query.facebookuser : false;
 
 	if( auth.validateToken(query.email, query.authtoken, facebookuser)) {
-		console.log(next());
+		next();
 	}
 	else {
 		res.statusCode = 403;

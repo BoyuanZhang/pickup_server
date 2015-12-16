@@ -49,6 +49,11 @@ var lobbyutil = {
 			return true;
 
 		return false;
+	},
+	validateAddToLobby: function(lobbyId, paddedEmail) {
+		if(lobbyId && paddedEmail) { return true; }
+
+		return false;
 	}
 }
 

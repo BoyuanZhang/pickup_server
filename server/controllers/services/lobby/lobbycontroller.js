@@ -72,22 +72,18 @@ var controller = {
 			res.json(ret);
 		});
 	},
-	'createLobby': function(lobbyId, creatorEmail, callback) {
-		var reqBody = req.body;
-		if(!lobbyutil.validateCreate(lobbyId, creatorEmail)) {
+	'createLobby': function(lobbyId, paddedEmail, callback) {
+		if(!lobbyutil.validateCreate(lobbyId, paddedEmail)) {
 			callback(false);
 			return;
 		}
 
 		ldhandler.lobbyExists(lobbyId, function(exists) {
 			if(!exists) {
-				ldhandler.createLobby(lobbyId, creatorEmail, function(success) {
+				ldhandler.createLobby(lobbyId, paddedEmail, function(success) {
 					if(success) {
-						accountcontroller.addLobby(creatorEmail, lobbyId, function(joined) {
-							if(!joined) {
-								//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
-							}
-						});
+						var userObj = auth.buildUserObjFromPaddedEmail(paddedEmail);
+						callbacks.createCb(lobbyId, userObj.email, userObj.facebookuser, paddedEmail);
 						callback(true);
 					} else {
 						callback(false);					
@@ -135,24 +131,20 @@ var controller = {
 			}
 		});
 	},
-	'joinLobby': function(email, lobbyId, callback) {
-		if(!lobbyutil.validateJoin(lobbyId, email)) {
+	'joinLobby': function(creatorEmail, lobbyId, callback) {
+		if(!lobbyutil.validateJoin(lobbyId, creatorEmail)) {
 			callback(false);
 		}
 
-		ldhandler.joinLobby(lobbyId, email, function(success) {
+		ldhandler.joinLobby(lobbyId, creatorEmail, function(success) {
 			if(success) {
-				var cb = callback;
-				accountcontroller.addLobby(email, lobbyId, function(joined) {
-					if(!joined) {
-						//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
-					}
-				})
+				var userObj = auth.buildUserObjFromPaddedEmail(creatorEmail);
+				callbacks.joinCb(lobbyId, userObj.email, userObj.facebookuser);
 				callback(true);
 			} else {
 				callback(false);
 			}
-		})
+		});
 	},
 	'destroyLobby': function(lobbyId, creatorEmail, callback) {
 		if(!lobbyutil.validateDestroy(lobbyId, creatorEmail)) {
@@ -172,6 +164,42 @@ var controller = {
 			}
 		});
 	},
+	'addUserToLobby': function(lobbyId, paddedEmail, callback) {
+		if(!lobbyutil.validateAddToLobby(lobbyId, paddedEmail)) {
+			callback(false);
+		}
+
+		ldhandler.joinLobby(lobbyId, paddedEmail, function(success) {
+			if(success) {
+				callback(true);
+			} else {
+				callback(false);
+			}
+		});
+	}
 };
 
 module.exports = controller;
+
+var callbacks = {
+	'createCb': function(lobbyId, userEmail, facebookuser, paddedEmail) {
+		accountcontroller.addLobby(lobbyId, userEmail, facebookuser, function(joined) {
+			if(!joined) {
+				//[BZ] TODO: if lobby was not added to the account we should error handle this somehow.
+			}
+		});
+
+		controller.addUserToLobby(lobbyId, paddedEmail, function(joined) {
+			if(!joined) {
+				//[BZ] TODO: if person was not added to this lobby we should error handle this somehow.				
+			}
+		});
+	},
+	'joinCb': function(lobbyId, userEmail, facebookuser) {
+		accountcontroller.addLobby(lobbyId, userEmail, facebookuser, function(joined) {
+			if(!joined) {
+				//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
+			}
+		})
+	}
+}

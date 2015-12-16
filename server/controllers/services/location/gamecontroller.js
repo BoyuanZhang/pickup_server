@@ -8,7 +8,7 @@ var paths = require('../../../paths'),
 
 var controller = {
 	'create': function(req, res) {
-		if(!gameutil.validateGameReq(req.body)) {
+		if(!gameutil.validateGameCreate(req.body)) {
 			responsehelper.handleBadRequest(res);
 			return;
 		}
@@ -21,11 +21,7 @@ var controller = {
 				gdhandler.createGame(creatorEmail, createObj, function(success, gameObj) {
 					if(success && gameObj) {
 						data.gameCreated = true;
-						lobbycontroller.createLobby(gameObj.gameId, creatorEmail, function(created) {
-							if(!created) {
-								//[BZ] TODO: Lobby could not be created, this situation needs to be handled somehow
-							}
-						});
+						callbacks.createCb(gameObj.gameId, creatorEmail);
 					} else if(success) {
 						//[BZ] TODO: Game object was not returned by mongo, needs to be handled somehow
 						data.gameCreated = true;
@@ -71,15 +67,11 @@ var controller = {
 			return;			
 		}
 
-		var data = {}, ret, gameId = req.body.gameId, creatorEmail = auth.getPaddedEmailFromQuery();
-		gdhandler.destroyGame(gameId, creatorEmail, function(success) {
+		var data = {}, ret, gameId = req.body.gameId, paddedEmail = auth.getPaddedEmailFromQuery();
+		gdhandler.destroyGame(gameId, paddedEmail, function(success) {
 			if(success) {
 				data.gameDestroyed = true;
-				lobbycontroller.destroyLobby(gameId, creatorEmail, function(destroyed) {
-					if(!destroyed) {
-						//[BZ] TODO: if lobby was not deleted we should error handle this somehow.
-					}
-				});
+				callbacks.destroyCb(gameId, paddedEmail);
 			}
 			else {
 				data.gameDestroyed = false;
@@ -92,3 +84,21 @@ var controller = {
 };
 
 module.exports = controller;
+
+var callbacks = {
+	'createCb': function(gameId, paddedEmail ) {
+		lobbycontroller.createLobby(gameId, paddedEmail, function(created) {
+			if(!created) {
+				//[BZ] TODO: Lobby could not be created, this situation needs to be handled somehow
+			}
+		});		
+	},
+
+	'destroyCb': function(gameId, paddedEmail ) {
+		lobbycontroller.destroyLobby(gameId, paddedEmail, function(destroyed) {
+			if(!destroyed) {
+				//[BZ] TODO: if lobby was not deleted we should error handle this somehow.
+			}
+		});		
+	}
+};

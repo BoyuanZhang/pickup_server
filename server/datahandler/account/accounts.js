@@ -19,8 +19,8 @@ var data_accounts = {
 		});
 	},
 	'findAccount': function(userEmail, facebookuser, callback) {
-		var db = dbclient.get(), users = db.collection('users');
-		facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
+		var db = dbclient.get(), users = db.collection('users'),
+			facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
 
 		users.findOne({email: userEmail, facebookuser: facebookuser}, function(err, found) {
 			if( err ) {
@@ -61,12 +61,14 @@ var data_accounts = {
 			}
 		});
 	},
-	'addLobby': function(useremail, lobbyId, callback) {
-		var db = dbclient.get(), users = db.collection('users');
+	'addLobby': function(lobbyId, useremail, facebookuser, callback) {
+		var db = dbclient.get(), users = db.collection('users'),
+			facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
 
 		users.update( 
 			{
-				email: useremail
+				email: useremail,
+				facebookuser: facebookuser
 			}, 
 			{
 				$addToSet: {
