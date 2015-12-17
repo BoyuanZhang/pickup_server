@@ -18,11 +18,10 @@ var data_accounts = {
 			}
 		});
 	},
-	'findAccount': function(userEmail, facebookuser, callback) {
-		var db = dbclient.get(), users = db.collection('users'),
-			facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
+	'findAccount': function(paddedEmail, callback) {
+		var db = dbclient.get(), users = db.collection('users');
 
-		users.findOne({email: userEmail, facebookuser: facebookuser}, function(err, found) {
+		users.findOne({paddedEmail: paddedEmail}, function(err, found) {
 			if( err ) {
 				callback(false);
 			}
@@ -61,14 +60,12 @@ var data_accounts = {
 			}
 		});
 	},
-	'addLobby': function(lobbyId, useremail, facebookuser, callback) {
-		var db = dbclient.get(), users = db.collection('users'),
-			facebookuser = (facebookuser === 'true' || facebookuser === true) ? 'true' : 'false';
+	'addLobby': function(lobbyId, paddedEmail, callback) {
+		var db = dbclient.get(), users = db.collection('users');
 
 		users.update( 
 			{
-				email: useremail,
-				facebookuser: facebookuser
+				paddedEmail: paddedEmail
 			}, 
 			{
 				$addToSet: {
@@ -83,11 +80,11 @@ var data_accounts = {
 			}
 		});		
 	},
-	'removeLobby': function(useremail, lobbyId, callback) {
+	'removeLobby': function(lobbyId, paddedEmail,callback) {
 		var db = dbclient.get(), users = db.collection('users');
 		lobby.update( 
 			{
-				email: useremail
+				paddedEmail: paddedEmail
 			},
 			{
 				$pull: {

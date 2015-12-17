@@ -50,7 +50,7 @@ var data_lobby = {
 			}
 		})
 	},
-	'leaveLobby': function(lobbyId, email, callback) {
+	'leaveLobby': function(lobbyId, paddedEmail, callback) {
 		var db = dbclient.get(), lobby = db.collection('lobby');
 
 		lobby.update( 
@@ -59,7 +59,7 @@ var data_lobby = {
 			},
 			{
 				$pull: {
-					users: email
+					users: paddedEmail
 				}
 			}, function(err, doc) {
 				if(err) {

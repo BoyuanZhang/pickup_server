@@ -28,29 +28,6 @@ var auth = {
 	createFBPadEmail: function(email) {
 		return email + secrets.fbemailpad;
 	},
-	buildUserObjFromPaddedEmail: function(paddedEmail) {
-		var userObj = {};
-
-		if( paddedEmail.lastIndexOf(secrets.fbemailpad) <= 0) {
-			userObj.email = paddedEmail;
-			userObj.facebookuser = 'false';
-		} else {
-			userObj.facebookuser = 'true';
-			userObj.email = paddedEmail.replace(new RegExp(secrets.fbemailpad + "$"), "");
-		}
-
-		return userObj;
-	},
-	getEmailFromQuery: function(query) {
-		if(!query.email) { return null; }
-
-		return query.email;
-	},
-	getFacebookUserFromQuery: function(query) {
-		if(!query.facebookuser) { return false; }
-
-		return true;
-	},
 	getPaddedEmailFromQuery: function(query) {
 		var facebookuser = query.facebookuser ? query.facebookuser : false;
 

@@ -13,7 +13,7 @@ var controller = {
 		}
 		
 		registerObj = req.body;
-		var facebookuser = (req.body.facebookuser) ? registerObj.facebookuser : 'false';
+		var facebookuser = (registerObj.facebookuser === 'true') ? 'true' : 'false';
 		adhandler.emailExists(registerObj.email, facebookuser, function(exists) {
 			var data = {}, ret;
 			if(!exists) {
@@ -43,7 +43,7 @@ var controller = {
 		}
 		
 		var loginObj = req.body;
-		var facebookuser = (loginObj.facebookuser) ? loginObj.facebookuser : 'false';
+		var facebookuser = (loginObj.facebookuser === 'true') ? 'true': 'false';
 		adhandler.loginUser(loginObj, facebookuser, function(authenticated) {
 			var data = {}, ret;
 			if(authenticated) {
@@ -63,7 +63,7 @@ var controller = {
 			return;
 		}
 		
-		var facebookuser = (req.body.facebookuser) ? req.body.facebookuser : 'false';
+		var facebookuser = (req.body.facebookuser === 'true') ? 'true' : 'false';
 		adhandler.emailExists(req.body.email, facebookuser, function(exists) { 
 			var data = {}, ret;	
 			if(exists) {
@@ -77,8 +77,8 @@ var controller = {
 		});		
 	},
 	'findLobbies': function(req, res) {
-		var query = req.query, userEmail = auth.getEmailFromQuery(query), facebookuser = auth.getFacebookUserFromQuery(query);
-		adhandler.findAccount(userEmail, facebookuser, function(success, doc) {
+		var query = req.query, paddedEmail = auth.getPaddedEmailFromQuery(query);
+		adhandler.findAccount(paddedEmail, function(success, doc) {
 			var data = {}, ret;	
 			if(success && doc) {
 				data.found = true;
@@ -90,23 +90,23 @@ var controller = {
 			res.json(ret);
 		});
 	},
-	'addLobby': function(lobbyId, userEmail, facebookuser, callback) {
-		if(!accutil.validateAddLobby(lobbyId, userEmail, facebookuser)) {
+	'addLobby': function(lobbyId, paddedEmail, callback) {
+		if(!accutil.validateAddLobby(lobbyId, paddedEmail)) {
 			callback(false);
 			return;
 		}
 
-		adhandler.addLobby(lobbyId, userEmail, facebookuser, function(success) {
+		adhandler.addLobby(lobbyId, paddedEmail, function(success) {
 			callback(success);
 		});
 	},
-	'removeLobby': function(userEmail, lobbyId, callback) {
-		if(!accutil.validateRemoveLobby(userEmail, lobbyId)) {
+	'removeLobby': function(lobbyId, paddedEmail, callback) {
+		if(!accutil.validateRemoveLobby(lobbyId, paddedEmail)) {
 			callback(false);
 			return;
 		}
 
-		adhandler.removeLobby(userEmail, lobbyId, function(success) {
+		adhandler.removeLobby(lobbyId, paddedEmail, function(success) {
 			callback(success);
 		});
 	}

@@ -25,17 +25,17 @@ var accountutil = {
 		
 		return false;
 	},
-	validateAddLobby: function(userEmail, lobbyId, facebookuser) {
-		if(userEmail && lobbyId) {
-			if( facebookuser && (facebookuser!=='true' && facebookuser!=='false')) { return false; }
+	validateAddLobby: function(lobbyId, paddedEmail) {
+		if(paddedEmail && lobbyId) {
 			return true;
 		}
 
 		return false;
 	},
-	validateRemoveLobby: function(userEmail, lobbyId) {
-		if(userEmail && lobbyId)
+	validateRemoveLobby: function(lobbyId, paddedEmail) {
+		if(paddedEmail && lobbyId) {
 			return true;
+		}
 
 		return false;
 	}

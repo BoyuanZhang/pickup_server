@@ -54,12 +54,12 @@ var controller = {
 			return;
 		}
 
-		var lobbyId = reqBody.lobbyId, userEmail = auth.getPaddedEmailFromQuery(reqQuery);
+		var lobbyId = reqBody.lobbyId, paddedEmail = auth.getPaddedEmailFromQuery(reqQuery);
 
-		ldhandler.leaveLobby(lobbyId, userEmail, function(left) {
+		ldhandler.leaveLobby(lobbyId, paddedEmail, function(left) {
 			var data = {}, ret;
 			if(left) {
-				accountcontroller.removeLobby(userEmail, lobbyId, function(removed) {
+				accountcontroller.removeLobby(paddedEmail, lobbyId, function(removed) {
 					if(!removed) {
 						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
 					}
@@ -82,8 +82,7 @@ var controller = {
 			if(!exists) {
 				ldhandler.createLobby(lobbyId, paddedEmail, function(success) {
 					if(success) {
-						var userObj = auth.buildUserObjFromPaddedEmail(paddedEmail);
-						callbacks.createCb(lobbyId, userObj.email, userObj.facebookuser, paddedEmail);
+						callbacks.createCb(lobbyId, paddedEmail);
 						callback(true);
 					} else {
 						callback(false);					
@@ -131,15 +130,14 @@ var controller = {
 			}
 		});
 	},
-	'joinLobby': function(creatorEmail, lobbyId, callback) {
-		if(!lobbyutil.validateJoin(lobbyId, creatorEmail)) {
+	'joinLobby': function(paddedEmail, lobbyId, callback) {
+		if(!lobbyutil.validateJoin(lobbyId, paddedEmail)) {
 			callback(false);
 		}
 
-		ldhandler.joinLobby(lobbyId, creatorEmail, function(success) {
+		ldhandler.joinLobby(lobbyId, paddedEmail, function(success) {
 			if(success) {
-				var userObj = auth.buildUserObjFromPaddedEmail(creatorEmail);
-				callbacks.joinCb(lobbyId, userObj.email, userObj.facebookuser);
+				callbacks.joinCb(lobbyId, paddedEmail);
 				callback(true);
 			} else {
 				callback(false);
@@ -182,8 +180,8 @@ var controller = {
 module.exports = controller;
 
 var callbacks = {
-	'createCb': function(lobbyId, userEmail, facebookuser, paddedEmail) {
-		accountcontroller.addLobby(lobbyId, userEmail, facebookuser, function(joined) {
+	'createCb': function(lobbyId, paddedEmail) {
+		accountcontroller.addLobby(lobbyId, paddedEmail, function(joined) {
 			if(!joined) {
 				//[BZ] TODO: if lobby was not added to the account we should error handle this somehow.
 			}
@@ -195,8 +193,8 @@ var callbacks = {
 			}
 		});
 	},
-	'joinCb': function(lobbyId, userEmail, facebookuser) {
-		accountcontroller.addLobby(lobbyId, userEmail, facebookuser, function(joined) {
+	'joinCb': function(lobbyId, paddedEmail) {
+		accountcontroller.addLobby(lobbyId, paddedEmail, function(joined) {
 			if(!joined) {
 				//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
 			}
