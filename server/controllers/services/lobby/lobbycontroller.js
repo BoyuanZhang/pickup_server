@@ -149,17 +149,20 @@ var controller = {
 			callback(false);
 		}
 
-		ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
-			if(destroyed) {
-				accountcontroller.removeLobby(creatorEmail, lobbyId, function(removed) {
-					if(!removed) {
-						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
-					}
-				});
-				callback(true);
-			} else {
+		ldhandler.findCreatorLobby(lobbyId, creatorEmail, function(found, lobbyObj) {
+			if(!found || !lobbyObj) {
 				callback(false);
+				return;
 			}
+
+			ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
+				if(destroyed) {
+					callbacks.destroyCb(lobbyObj);
+					callback(true);
+				} else {
+					callback(false);
+				}
+			});
 		});
 	},
 	'addUserToLobby': function(lobbyId, paddedEmail, callback) {
@@ -199,5 +202,18 @@ var callbacks = {
 				//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
 			}
 		})
+	},
+	'destroyCb': function(lobbyObj) {
+		if(!lobbyObj && !lobbyObj.lobbyId && !lobbyObj.users) {
+			//[BZ] TODO: There should always be a lobby object, if there is not handle this error.
+			return;
+		}
+
+		var lobbyId = lobbyObj.lobbyId, lobbyUsers = lobbyObj.users;
+		accountcontroller.removeLobbies(lobbyId, lobbyUsers, function(removed) {
+			if(!removed) {
+				//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+			}
+		});
 	}
 }

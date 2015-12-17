@@ -67,7 +67,7 @@ var controller = {
 			return;			
 		}
 
-		var data = {}, ret, gameId = req.body.gameId, paddedEmail = auth.getPaddedEmailFromQuery();
+		var data = {}, ret, gameId = req.body.gameId, paddedEmail = auth.getPaddedEmailFromQuery(req.query);
 		gdhandler.destroyGame(gameId, paddedEmail, function(success) {
 			if(success) {
 				data.gameDestroyed = true;

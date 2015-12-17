@@ -82,7 +82,8 @@ var data_accounts = {
 	},
 	'removeLobby': function(lobbyId, paddedEmail,callback) {
 		var db = dbclient.get(), users = db.collection('users');
-		lobby.update( 
+
+		users.update( 
 			{
 				paddedEmail: paddedEmail
 			},
@@ -97,6 +98,33 @@ var data_accounts = {
 					callback(true);
 				}
 		});
+	},
+	'removeLobbies': function(lobbyId, lobbyUsers, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+
+		if(lobbyUsers.length === 0) {
+			callback(true);
+			return;
+		}
+
+		users.update(
+			{
+				paddedEmail: 
+					{
+						$in: lobbyUsers
+					}
+			},
+			{
+				$pull: {
+					lobbies: lobbyId
+				}
+			}, function(err, doc) {
+				if(err) {
+					callback(false);
+				} else {
+					callback(true);
+				}
+		})
 	}
 };
 

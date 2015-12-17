@@ -127,6 +127,22 @@ var data_lobby = {
 				callback(false);
 			}
 		});
+	},
+	'findCreatorLobby': function(lobbyId, creatorEmail, callback) {
+		var db = dbclient.get(), lobby = db.collection('lobby');
+
+		lobby.findOne({lobbyId: lobbyId, creatorEmail: creatorEmail}, function(err, found) {
+			if( err ) {
+				callback(false);
+			}
+			else if( found ) {
+				result = found;
+				callback(true, found);
+			}
+			else {
+				callback(false);
+			}
+		});	
 	}
 };
 

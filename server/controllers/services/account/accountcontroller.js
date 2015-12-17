@@ -109,6 +109,16 @@ var controller = {
 		adhandler.removeLobby(lobbyId, paddedEmail, function(success) {
 			callback(success);
 		});
+	},
+	'removeLobbies': function(lobbyId, lobbyUsers, callback) {
+		if(!accutil.validateRemoveLobbies(lobbyId, lobbyUsers)) {
+			callback(false);
+			return;
+		}
+
+		adhandler.removeLobbies(lobbyId, lobbyUsers, function(success) {
+			callback(success);
+		});
 	}
 };
 
