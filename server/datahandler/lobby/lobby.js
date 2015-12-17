@@ -28,17 +28,6 @@ var data_lobby = {
 			}
 		});
 	},
-	'fetchChat': function(lobbyId, callback) {
-		var db = dbclient.get(), lobby = db.collection('lobby');
-
-		lobby.findOne({lobbyId: lobbyId}, function(err, doc) {
-			if(err) {
-				callback(false);
-			} else {
-				callback(true, doc);
-			}
-		});
-	},
 	'destroyChat': function(lobbyId, creatorEmail, callback) {
 		var db = dbclient.get(), lobby = db.collection('lobby');
 

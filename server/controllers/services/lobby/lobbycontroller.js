@@ -16,7 +16,7 @@ var controller = {
 		}
 
 		var lobbyId = reqBody.lobbyId;
-		this.exists(lobbyId, function(exists, err) {
+		ldhandler.lobbyExists(lobbyId, function(exists, err) {
 			var data = {}, ret;
 			if(!exists && !err) {
 				data.lobbyExists = true;
@@ -35,11 +35,11 @@ var controller = {
 		}
 
 		var lobbyId = reqBody.lobbyId;
-		ldhandler.fetchChat(lobbyId, function(success, element) {
+		ldhandler.findLobby(lobbyId, function(success, lobby) {
 			var data = {}, ret;
-			if(success && element) {
+			if(success && lobby) {
 				data.fetchSuccess = true;
-				data.chatLog = element.chatLog;
+				data.chatLog = lobby.chatLog;
 			} else {
 				data.fetchSuccess = false;	
 			}
@@ -59,11 +59,7 @@ var controller = {
 		ldhandler.leaveLobby(lobbyId, paddedEmail, function(left) {
 			var data = {}, ret;
 			if(left) {
-				accountcontroller.removeLobby(paddedEmail, lobbyId, function(removed) {
-					if(!removed) {
-						//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
-					}
-				});
+				callbacks.leaveCb(lobbyId, paddedEmail);
 				data.leftLobby = true;
 			} else {
 				data.leftLobby = false;
@@ -91,14 +87,6 @@ var controller = {
 			} else {
 				callback(false);	
 			}
-		});
-	},
-	'exists': function(lobbyId, callback) {
-		if(!lobbyId) {
-			callback(false);
-		}
-		ldhandler.lobbyExists(lobbyId, function(exists, err) {
-			callback(exists, err);
 		});
 	},
 	'updateChat': function(lobbyId, msg, callback) {
@@ -142,6 +130,19 @@ var controller = {
 			} else {
 				callback(false);
 			}
+		});
+	},
+	//[BZ] TODO: This is pretty much duplicated by the lobbyExists function above, except that function 
+	// needs a request and response object. Is there a way to re-use this exist function instead of
+	// having duplicate functions essentially? Also using this.exists above does not work because
+	// exists loses context. What is the best way to get the context of 'this' to call functions inside
+	// our controller
+	'exists': function(lobbyId, callback) {
+		if(!lobbyId) {
+			callback(false);
+		}
+		ldhandler.lobbyExists(lobbyId, function(exists, err) {
+			callback(exists, err);
 		});
 	},
 	'destroyLobby': function(lobbyId, creatorEmail, callback) {
@@ -215,5 +216,12 @@ var callbacks = {
 				//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
 			}
 		});
+	},
+	'leaveCb': function(lobbyId, paddedEmail) {
+		accountcontroller.removeLobby(lobbyId, paddedEmail, function(removed) {
+			if(!removed) {
+				//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+			}
+		});		
 	}
 }
