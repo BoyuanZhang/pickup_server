@@ -23,7 +23,7 @@ var auth = {
 			email = this.createFBPadEmail(email);	
 
 		var expectedContent = createTokenContent(email);
-		return (expectedContent == jwt.decode(token, secrets.authsecret));
+		return (expectedContent === jwt.decode(token, secrets.authsecret));
 	},
 	createFBPadEmail: function(email) {
 		return email + secrets.fbemailpad;

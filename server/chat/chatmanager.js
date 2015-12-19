@@ -3,12 +3,24 @@ var paths = require('../paths'),
 	lobbymanager = require(paths.chat + '/lobby/lobbymanager'),
 	chatutil = require(paths.chat + '/util/chatutil'),
 	resbuilder = require(paths.chat + '/response/builder'),
+	auth = require(paths.security + '/auth'),
 	io = null;
 
 var chatmanager = {
 	setup: function(server){
 		io = socketio(server);
 
+		io.use(function(socket, next) {
+			var query = socket.handshake.query;
+		    if (auth.validateToken(query.email, query.facebookuser, query.token)) {
+		        next();
+		    } else {
+		    	//[BZ] TODO: Build more elegant error response for unauthorized requests.
+		    	//For now just return the 401 unauthorized error code
+		        next(new Error('401'));
+		    }
+		});
+ 
 		io.on("connection", function(client) {
 			client.on("joinLobby", function(user, lobby) {
 				if(!chatutil.validateJoin(user, lobby)) {
@@ -41,7 +53,7 @@ var chatmanager = {
 				});
 			});
 		});
-	},
+	}
 };
 
 module.exports = chatmanager;

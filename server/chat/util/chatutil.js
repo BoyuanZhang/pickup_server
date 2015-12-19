@@ -16,6 +16,11 @@ var chatutil = {
 			return true;
 
 		return false;
+	},
+	validateAuthQuery: function(query) {
+		if(query.email && query.facbookuser && query.authtoken) { return true; }
+	
+		return false;
 	}
 }
 
