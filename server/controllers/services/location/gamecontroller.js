@@ -80,6 +80,27 @@ var controller = {
 			ret = responseservice.buildBasicResponse(data);
 			res.json(ret);
 		});
+	},
+
+	'findGame': function(req, res) {
+		if(!gameutil.validateFindGame(req.body)) {
+			responsehelper.handleBadRequest(res);
+			return;			
+		}
+
+		var data = {}, ret, gameId = req.body.gameId;
+		gdhandler.findGame(gameId, function(success) {
+			if(success && game) {
+				data.gameFound = true;
+				data.game = game;
+			}
+			else {
+				data.gameFound = false;
+			}
+
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		});
 	}
 };
 

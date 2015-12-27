@@ -41,8 +41,13 @@ var gameutil = {
 	},
 
 	validateDestroy: function(body) {
-		if(body.gameId)
-			return true;
+		if(body.gameId) { return true; }
+
+		return false;
+	},
+
+	validateFindGame: function(body) {
+		if(body.gameId) { return true; }
 
 		return false;
 	}

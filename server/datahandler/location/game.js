@@ -56,7 +56,7 @@ var data_games = {
 					else {
 						callback(true, docs);
 					}
-				})
+				});
 	},
 
 	'destroyGame': function(gameId, creatorEmail, callback) {
@@ -69,6 +69,20 @@ var data_games = {
 				callback(true);
 			}
 		})
+	},
+
+	'findGame': function(gameId, callback) {
+		var db = db.client.get(), games = db.collection('games');
+
+		games.findOne( {gameId: gameId}, true, function(err, game) {
+			if(err) { 
+				callback(false);
+			} else if(game) {
+				callback(true, game);
+			} else {
+				callback(false);
+			}
+		});
 	}
 };
 
