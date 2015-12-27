@@ -30,6 +30,11 @@ var accountutil = {
 
 		return false;
 	},
+	validateAddCreatedLobby: function(lobbyId, paddedEmail) {
+		if(lobbyId && paddedEmail) { return true; }
+
+		return false;
+	},
 	validateRemoveLobby: function(lobbyId, paddedEmail) {
 		if(paddedEmail && lobbyId) {
 			return true;
@@ -39,6 +44,11 @@ var accountutil = {
 	},
 	validateRemoveLobbies: function(lobbyId, lobbyUsers) {
 		if(lobbyId && lobbyUsers.constructor === Array) { return true; }
+
+		return false;
+	},
+	validateRemovedCreatedLobby: function(lobbyId, creatorEmail) {
+		if(lobbyId && creatorEmail) { return true; }
 
 		return false;
 	}

@@ -11,7 +11,7 @@ var controller = {
 			responsehelper.handleBadRequest(res);
 			return;
 		}
-		
+
 		registerObj = req.body;
 		var facebookuser = (registerObj.facebookuser === 'true') ? 'true' : 'false';
 		adhandler.emailExists(registerObj.email, facebookuser, function(exists) {
@@ -90,6 +90,30 @@ var controller = {
 			res.json(ret);
 		});
 	},
+	'findCreatedLobbies': function(req, res) {
+		var query = req.query, paddedEmail = auth.getPaddedEmailFromQuery(query);
+		adhandler.findAccount(paddedEmail, function(success, doc) {
+			var data = {}, ret;	
+			if(success && doc) {
+				data.found = true;
+				data.createdLobbies = doc.createdLobbies;
+			} else {
+				data.found = false;
+			}
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		});
+	},
+	'addCreatedLobby': function(lobbyId, paddedEmail, callback) {
+		if(!accutil.validateAddCreatedLobby(lobbyId, paddedEmail)) {
+			callback(false);
+			return;
+		}
+
+		adhandler.addCreatedLobby(lobbyId, paddedEmail, function(success) {
+			callback(success);
+		});
+	},
 	'addLobby': function(lobbyId, paddedEmail, callback) {
 		if(!accutil.validateAddLobby(lobbyId, paddedEmail)) {
 			callback(false);
@@ -117,6 +141,16 @@ var controller = {
 		}
 
 		adhandler.removeLobbies(lobbyId, lobbyUsers, function(success) {
+			callback(success);
+		});
+	},
+	'removeCreatedLobby': function(lobbyId, creatorEmail, callback) {
+		if(!accutil.validateRemovedCreatedLobby(lobbyId, creatorEmail)) {
+			callback(false);
+			return;
+		}
+
+		adhandler.removeCreatedLobby(lobbyId, creatorEmail, function(success) {
 			callback(success);
 		});
 	}

@@ -10,6 +10,7 @@ var userFactory = {
 		user.facebookuser = facebookuser;
 		user.password = userObj.password;
 		user.lobbies = [];
+		user.createdLobbies = [];
 
 		return user;
 	}

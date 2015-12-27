@@ -210,10 +210,20 @@ var callbacks = {
 			return;
 		}
 
-		var lobbyId = lobbyObj.lobbyId, lobbyUsers = lobbyObj.users;
+		var lobbyId = lobbyObj.lobbyId, lobbyUsers = lobbyObj.users, creatorEmail = lobbyObj.creatorEmail, index = -1;
+
+		index = lobbyUsers.indexOf(creatorEmail);
+		if( index > -1) { lobbyUsers.splice(index, 1); }
+
 		accountcontroller.removeLobbies(lobbyId, lobbyUsers, function(removed) {
 			if(!removed) {
-				//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
+				//[BZ] TODO: if person did not leave this lobby we should error handle this somehow.
+			}
+		});
+
+		accountcontroller.removeCreatedLobby(lobbyId, creatorEmail, function(removed) {
+			if(!removed) {
+				//[BZ] TODO: if the created lobby is not removed from the account we should handle this error somehow.
 			}
 		});
 	},

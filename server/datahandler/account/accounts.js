@@ -80,6 +80,26 @@ var data_accounts = {
 			}
 		});		
 	},
+	'addCreatedLobby': function(lobbyId, paddedEmail, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+
+		users.update(
+			{
+				paddedEmail: paddedEmail
+			},
+			{
+				$addToSet: {
+					createdLobbies: lobbyId
+				}
+			}
+			, function(err, doc) {
+			if(err) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});
+	},
 	'removeLobby': function(lobbyId, paddedEmail,callback) {
 		var db = dbclient.get(), users = db.collection('users');
 
@@ -124,7 +144,26 @@ var data_accounts = {
 				} else {
 					callback(true);
 				}
-		})
+		});
+	},
+	'removeCreatedLobby': function(lobbyId, paddedEmail, callback) {
+		var db = dbclient.get(), users = db.collection('users');
+
+		users.update( 
+			{
+				paddedEmail: paddedEmail
+			}, 
+			{
+				$pull: {
+					createdLobbies: lobbyId
+				}
+			}, function(err, doc) {
+				if(err) {
+					callback(false);
+				} else {
+					callback(true);
+				}
+		});
 	}
 };
 
