@@ -47,6 +47,27 @@ var controller = {
 			res.json(ret);		
 		});
 	},
+	'joinLobby': function(req, res) {
+		var reqBody = req.body, reqQuery = req.query;
+		if(!lobbyutil.validateJoin(reqBody, reqQuery)) {
+			callback(false);
+		}
+
+		var lobbyId = reqBody.lobbyId, paddedEmail = auth.getPaddedEmailFromQuery(reqQuery);
+
+		ldhandler.joinLobby(lobbyId, paddedEmail, function(success) {
+			var data = {}, ret;
+			if(success) {
+				data.joinSuccess = true;
+				callbacks.joinCb(lobbyId, paddedEmail);
+			} else {
+				data.joinSuccess = false;
+			}
+
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		});
+	},
 	'leaveLobby': function(req, res) {
 		var reqBody = req.body, reqQuery = req.query;
 		if(!lobbyutil.validateLeave(reqBody, reqQuery)) {
@@ -118,33 +139,6 @@ var controller = {
 			}
 		});
 	},
-	'joinLobby': function(paddedEmail, lobbyId, callback) {
-		if(!lobbyutil.validateJoin(lobbyId, paddedEmail)) {
-			callback(false);
-		}
-
-		ldhandler.joinLobby(lobbyId, paddedEmail, function(success) {
-			if(success) {
-				callbacks.joinCb(lobbyId, paddedEmail);
-				callback(true);
-			} else {
-				callback(false);
-			}
-		});
-	},
-	//[BZ] TODO: This is pretty much duplicated by the lobbyExists function above, except that function 
-	// needs a request and response object. Is there a way to re-use this exist function instead of
-	// having duplicate functions essentially? Also using this.exists above does not work because
-	// exists loses context. What is the best way to get the context of 'this' to call functions inside
-	// our controller
-	'exists': function(lobbyId, callback) {
-		if(!lobbyId) {
-			callback(false);
-		}
-		ldhandler.lobbyExists(lobbyId, function(exists, err) {
-			callback(exists, err);
-		});
-	},
 	'destroyLobby': function(lobbyId, creatorEmail, callback) {
 		if(!lobbyutil.validateDestroy(lobbyId, creatorEmail)) {
 			callback(false);
@@ -184,13 +178,14 @@ var controller = {
 module.exports = controller;
 
 var callbacks = {
-	'createCb': function(lobbyId, paddedEmail) {
-		accountcontroller.addLobby(lobbyId, paddedEmail, function(joined) {
+	'createCb': function(gameId, paddedEmail) {
+		accountcontroller.addCreatedGame(gameId, paddedEmail, function(joined) {
 			if(!joined) {
 				//[BZ] TODO: if lobby was not added to the account we should error handle this somehow.
 			}
 		});
 
+		var lobbyId = gameId;
 		controller.addUserToLobby(lobbyId, paddedEmail, function(joined) {
 			if(!joined) {
 				//[BZ] TODO: if person was not added to this lobby we should error handle this somehow.				
@@ -210,10 +205,10 @@ var callbacks = {
 			return;
 		}
 
-		var lobbyId = lobbyObj.lobbyId, lobbyUsers = lobbyObj.users, creatorEmail = lobbyObj.creatorEmail, index = -1;
+		var lobbyId = lobbyObj.lobbyId, lobbyUsers = lobbyObj.users, creatorEmail = lobbyObj.creatorEmail, index=-1;
 
 		index = lobbyUsers.indexOf(creatorEmail);
-		if( index > -1) { lobbyUsers.splice(index, 1); }
+		if(index > -1) { lobbyUsers.splice(index, 1); }
 
 		accountcontroller.removeLobbies(lobbyId, lobbyUsers, function(removed) {
 			if(!removed) {
@@ -221,7 +216,7 @@ var callbacks = {
 			}
 		});
 
-		accountcontroller.removeCreatedLobby(lobbyId, creatorEmail, function(removed) {
+		accountcontroller.removeCreatedGame(lobbyId, creatorEmail, function(removed) {
 			if(!removed) {
 				//[BZ] TODO: if the created lobby is not removed from the account we should handle this error somehow.
 			}

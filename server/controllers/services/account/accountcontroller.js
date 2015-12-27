@@ -90,13 +90,13 @@ var controller = {
 			res.json(ret);
 		});
 	},
-	'findCreatedLobbies': function(req, res) {
+	'findCreatedGames': function(req, res) {
 		var query = req.query, paddedEmail = auth.getPaddedEmailFromQuery(query);
 		adhandler.findAccount(paddedEmail, function(success, doc) {
 			var data = {}, ret;	
 			if(success && doc) {
 				data.found = true;
-				data.createdLobbies = doc.createdLobbies;
+				data.createdGames = doc.createdGames;
 			} else {
 				data.found = false;
 			}
@@ -104,13 +104,13 @@ var controller = {
 			res.json(ret);
 		});
 	},
-	'addCreatedLobby': function(lobbyId, paddedEmail, callback) {
-		if(!accutil.validateAddCreatedLobby(lobbyId, paddedEmail)) {
+	'addCreatedGame': function(gameId, paddedEmail, callback) {
+		if(!accutil.validateAddCreatedGame(gameId, paddedEmail)) {
 			callback(false);
 			return;
 		}
 
-		adhandler.addCreatedLobby(lobbyId, paddedEmail, function(success) {
+		adhandler.addCreatedGame(gameId, paddedEmail, function(success) {
 			callback(success);
 		});
 	},
@@ -144,13 +144,13 @@ var controller = {
 			callback(success);
 		});
 	},
-	'removeCreatedLobby': function(lobbyId, creatorEmail, callback) {
-		if(!accutil.validateRemovedCreatedLobby(lobbyId, creatorEmail)) {
+	'removeCreatedGame': function(gameId, creatorEmail, callback) {
+		if(!accutil.validateRemovedCreatedGame(gameId, creatorEmail)) {
 			callback(false);
 			return;
 		}
 
-		adhandler.removeCreatedLobby(lobbyId, creatorEmail, function(success) {
+		adhandler.removeCreatedGame(gameId, creatorEmail, function(success) {
 			callback(success);
 		});
 	}

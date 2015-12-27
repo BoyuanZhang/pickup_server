@@ -80,7 +80,7 @@ var data_accounts = {
 			}
 		});		
 	},
-	'addCreatedLobby': function(lobbyId, paddedEmail, callback) {
+	'addCreatedGame': function(gameId, paddedEmail, callback) {
 		var db = dbclient.get(), users = db.collection('users');
 
 		users.update(
@@ -89,7 +89,7 @@ var data_accounts = {
 			},
 			{
 				$addToSet: {
-					createdLobbies: lobbyId
+					createdGames: gameId
 				}
 			}
 			, function(err, doc) {
@@ -146,7 +146,7 @@ var data_accounts = {
 				}
 		});
 	},
-	'removeCreatedLobby': function(lobbyId, paddedEmail, callback) {
+	'removeCreatedGame': function(gameId, paddedEmail, callback) {
 		var db = dbclient.get(), users = db.collection('users');
 
 		users.update( 
@@ -155,7 +155,7 @@ var data_accounts = {
 			}, 
 			{
 				$pull: {
-					createdLobbies: lobbyId
+					createdGames: gameId
 				}
 			}, function(err, doc) {
 				if(err) {

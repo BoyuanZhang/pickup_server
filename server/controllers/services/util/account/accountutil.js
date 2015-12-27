@@ -30,8 +30,8 @@ var accountutil = {
 
 		return false;
 	},
-	validateAddCreatedLobby: function(lobbyId, paddedEmail) {
-		if(lobbyId && paddedEmail) { return true; }
+	validateAddCreatedGame: function(gameId, paddedEmail) {
+		if(gameId && paddedEmail) { return true; }
 
 		return false;
 	},
@@ -47,8 +47,8 @@ var accountutil = {
 
 		return false;
 	},
-	validateRemovedCreatedLobby: function(lobbyId, creatorEmail) {
-		if(lobbyId && creatorEmail) { return true; }
+	validateRemovedCreatedGame: function(gameId, creatorEmail) {
+		if(gameId && creatorEmail) { return true; }
 
 		return false;
 	}

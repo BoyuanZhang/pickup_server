@@ -44,8 +44,8 @@ var lobbyutil = {
 
 		return false;
 	},
-	validateJoin: function(lobbyId, paddedEmail) {
-		if(lobbyId && paddedEmail)
+	validateJoin: function(lobby, reqQuery) {
+		if(lobby.lobbyId && reqQuery.email)
 			return true;
 
 		return false;

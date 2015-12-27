@@ -6,7 +6,7 @@ function init(app){
 	app.post('/services/account/login', controller.login);
 	app.post('/services/account/emailexist', controller.emailexist);
 	app.get('/API/REST/1.0/account/findLobbies', controller.findLobbies);
-	app.get('/API/REST/1.0/account/findCreatedLobbies', controller.findCreatedLobbies);
+	app.get('/API/REST/1.0/account/findCreatedGames', controller.findCreatedGames);
 };
 
 exports.init = init;

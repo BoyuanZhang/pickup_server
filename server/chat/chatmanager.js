@@ -22,22 +22,6 @@ var chatmanager = {
 		});
  
 		io.on("connection", function(client) {
-			client.on("joinLobby", function(user, lobby) {
-				if(!chatutil.validateJoin(user, lobby)) {
-					client.emit('message', resbuilder.buildJoinMsg('error', 'Invalid request to join lobby'));
-					return;
-				}
-
-				var lobbyId = lobby.lobbyId;
-				lobbymanager.joinLobby(lobbyId, user, function(joined) {
-					if(joined) {
-						client.join(lobbyId);
-					} else {
-						client.emit('message', resbuilder.buildJoinMsg('error', 'Could not join lobby with id: ' + lobbyId));
-					}
-				});
-			});
-
 			client.on("send", function(user, lobbyId, msg) {
 				if(!chatutil.validateSend(user, lobbyId, msg)) {
 					client.emit('message', resbuilder.buildJoinMsg('error', 'Invalid request send message'));
