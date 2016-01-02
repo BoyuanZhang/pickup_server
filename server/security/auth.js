@@ -19,8 +19,7 @@ var auth = {
 		return token;
 	},
 	validateToken: function(email, token, facebookuser) {
-		if(facebookuser === 'true')
-			email = this.createFBPadEmail(email);	
+		if(facebookuser === 'true') { email = this.createFBPadEmail(email); }	
 
 		var expectedContent = createTokenContent(email);
 		return (expectedContent === jwt.decode(token, secrets.authsecret));

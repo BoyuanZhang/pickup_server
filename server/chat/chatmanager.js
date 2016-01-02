@@ -12,7 +12,9 @@ var chatmanager = {
 
 		io.use(function(socket, next) {
 			var query = socket.handshake.query;
-		    if (auth.validateToken(query.email, query.facebookuser, query.token)) {
+			(query.facebookuser && query.facebookuser === true) ? query.facebookuser = 'true' : query.facebookuser = 'false';
+
+		    if (auth.validateToken(query.email, query.token, query.facebookuser)) {
 		        next();
 		    } else {
 		    	//[BZ] TODO: Build more elegant error response for unauthorized requests.
