@@ -69,12 +69,13 @@ var data_lobby = {
 				$push: {
 					chatLog: {
 						$each: [msg],
-						$slice: maxMessages
+						$slice: (maxMessages*-1)
 					}
 				}
 			} 
 			, function(err, doc) {
 			if(err) {
+				console.log(err);
 				callback(false);
 			} else {
 				callback(true);

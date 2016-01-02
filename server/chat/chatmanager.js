@@ -30,7 +30,7 @@ var chatmanager = {
 					return;					
 				}
 
-				lobbymanager.emitToLobby(user.email, lobbyId, msg, function(emitSuccess) {
+				lobbymanager.emitToLobby(user.email, user.facebookuser, lobbyId, msg, function(emitSuccess) {
 					if(emitSuccess) {
 						io.sockets.in(lobbyId).emit('roomMessage', resbuilder.buildBroadcastMsg('broadcast', msg));
 					} else {

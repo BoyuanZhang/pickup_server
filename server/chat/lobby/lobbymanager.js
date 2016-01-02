@@ -7,7 +7,7 @@ var lobbies = {};
 
 var lobbymanager = {
 	emitToLobby: function(email, facebookUser, lobbyId, msg, callback) {
-		var userEmail = (facebookUser) ? auth.createFBPadEmail(email) : email;
+		var userEmail = (facebookUser === 'true') ? auth.createFBPadEmail(email) : email;
 		lobbycontroller.userInLobby(lobbyId, userEmail, function(inLobby) {
 			if(inLobby) {
 				lobbycontroller.updateChat(lobbyId, msg, function(success) {

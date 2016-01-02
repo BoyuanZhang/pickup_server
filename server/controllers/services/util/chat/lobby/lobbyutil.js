@@ -39,8 +39,7 @@ var lobbyutil = {
 		return false;
 	},
 	validateUserInLobby: function(lobbyId, email) {
-		if(lobbyId && msg)
-			return true;
+		if(lobbyId && email) { return true; }
 
 		return false;
 	},

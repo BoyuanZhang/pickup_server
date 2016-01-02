@@ -114,7 +114,6 @@ var controller = {
 		if(!lobbyutil.validateUpdate(lobbyId, msg)) {
 			callback(false);
 		}
-
 		ldhandler.updateChat(lobbyId, msg, function(success) {
 			callback(success);
 		})
