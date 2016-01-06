@@ -99,7 +99,6 @@ var controller = {
 			if(!exists) {
 				ldhandler.createLobby(lobbyId, paddedEmail, function(success) {
 					if(success) {
-						callbacks.createCb(lobbyId, paddedEmail);
 						callback(true);
 					} else {
 						callback(false);					
@@ -177,20 +176,6 @@ var controller = {
 module.exports = controller;
 
 var callbacks = {
-	'createCb': function(gameId, paddedEmail) {
-		accountcontroller.addCreatedGame(gameId, paddedEmail, function(joined) {
-			if(!joined) {
-				//[BZ] TODO: if lobby was not added to the account we should error handle this somehow.
-			}
-		});
-
-		var lobbyId = gameId;
-		controller.addUserToLobby(lobbyId, paddedEmail, function(joined) {
-			if(!joined) {
-				//[BZ] TODO: if person was not added to this lobby we should error handle this somehow.				
-			}
-		});
-	},
 	'joinCb': function(lobbyId, paddedEmail) {
 		accountcontroller.addLobby(lobbyId, paddedEmail, function(joined) {
 			if(!joined) {
@@ -227,5 +212,11 @@ var callbacks = {
 				//[BZ] TODO: if person did not join this lobby we should error handle this somehow.
 			}
 		});		
+	}
+}
+
+var rollbacks = {
+	'joinRb': function(gameId, paddedEmail) {
+
 	}
 }

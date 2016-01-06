@@ -19,18 +19,13 @@ var controller = {
 			var data = {}, ret;
 			if(allowed) {
 				gdhandler.createGame(creatorEmail, createObj, function(success, gameObj) {
-					if(success && gameObj) {
-						data.gameCreated = true;
-						callbacks.createCb(gameObj.gameId, creatorEmail);
-					} else if(success) {
-						//[BZ] TODO: Game object was not returned by mongo, needs to be handled somehow
-						data.gameCreated = true;
-					}
-					else {
-						data.gameCreated = false;					
-					}
-					ret = responseservice.buildBasicResponse(data);
-					res.json(ret);	
+					if(success) {
+						callbacks.createCb(gameObj.gameId, creatorEmail, req, res);
+					} else {
+						data.gameCreated = false;
+						ret = responseservice.buildBasicResponse(data);
+						res.json(ret);			
+					}	
 				});
 			}
 			else {
@@ -107,15 +102,53 @@ var controller = {
 module.exports = controller;
 
 var callbacks = {
-	'createCb': function(gameId, paddedEmail ) {
+	'createCb': function(gameId, paddedEmail, req, res) {
+		var lobbyCreated = null, userAddedToLobby = null, gameAddedToAccount = null, data = {}, ret, lobbyId = gameId;
+
 		lobbycontroller.createLobby(gameId, paddedEmail, function(created) {
 			if(!created) {
-				//[BZ] TODO: Lobby could not be created, this situation needs to be handled somehow
+				failure();
+			} else {
+				lobbyCreated = true;
+				complete();
 			}
-		});		
+		});
+
+		lobbyController.addUserToLobby(lobbyId, paddedEmail, function(joined) {
+			if(!joined) {
+				failure();
+			} else {
+				userAddedToLobby = true;
+				complete();
+			}
+		});
+
+		accountcontroller.addCreatedGame(gameId, paddedEmail, function(joined) {
+			if(!joined) {
+				failure();
+			} else {
+				gameAddedToAccount = true;
+				complete();
+			}
+		});
+
+		function complete() {
+			if(lobbyCreated && userAddedToLobby && gameAddedToAccount) {
+				data.gameCreated = true;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
+			}
+		}
+
+		function failure() {
+			rollbacks.createRb(gameId, paddedEmail);
+			data.gameCreated = false;
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		}
 	},
 
-	'destroyCb': function(gameId, paddedEmail ) {
+	'destroyCb': function(gameId, paddedEmail) {
 		lobbycontroller.destroyLobby(gameId, paddedEmail, function(destroyed) {
 			if(!destroyed) {
 				//[BZ] TODO: if lobby was not deleted we should error handle this somehow.
@@ -123,3 +156,9 @@ var callbacks = {
 		});		
 	}
 };
+
+var rollbacks = {
+	'createRb': function(gameId, paddedEmail) {
+
+	}
+}
