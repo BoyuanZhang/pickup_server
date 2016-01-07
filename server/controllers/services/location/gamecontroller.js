@@ -141,7 +141,7 @@ var callbacks = {
 		}
 
 		function failure() {
-			rollbacks.createRb(gameId, paddedEmail);
+			rollbacks.createRb(gameId, paddedEmail, lobbyCreated, gameAddedToAccount);
 			data.gameCreated = false;
 			ret = responseservice.buildBasicResponse(data);
 			res.json(ret);
@@ -158,7 +158,27 @@ var callbacks = {
 };
 
 var rollbacks = {
-	'createRb': function(gameId, paddedEmail) {
+	'createRb': function(gameId, paddedEmail, lobbyCreated, gameAddedToAccount) {
+		gdhandler.destroyGame(gameId, paddedEmail, function(success) {
+			if(!success) {
+				//[BZ] TODO: if game is not destroyed we need to handle this error somehow.
+			}
+		});
 
+		if(lobbyCreated) {
+			lobbycontroller.removeLobby(gameId, paddedEmail, function(destroyed) {
+				if(!destroyed) {
+					//[BZ] TODO: if lobby is not deleted we need to handle this error somehow.
+				}
+			});
+		}
+
+		if(gameAddedToAccount) {
+			accountcontroller.removeCreatedGame(gameId, paddedEmail, function(removed) {
+				if(!removed) {
+					//[BZ] TODO: if game is not removed from account's created list we need to handle this error somehow.					
+				}
+			});
+		}
 	}
 }

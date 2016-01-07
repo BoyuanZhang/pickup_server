@@ -146,7 +146,7 @@ var controller = {
 				return;
 			}
 
-			ldhandler.destroyChat(lobbyId, creatorEmail, function(destroyed) {
+			ldhandler.destroyLobby(lobbyId, creatorEmail, function(destroyed) {
 				if(destroyed) {
 					callbacks.destroyCb(lobbyObj);
 					callback(true);
@@ -154,6 +154,19 @@ var controller = {
 					callback(false);
 				}
 			});
+		});
+	},
+	'removeLobby': function(lobbyId, creatorEmail, callback) {
+		if(!lobbyutil.validateDestroy(lobbyId)) {
+			callback(false);
+		}
+
+		ldhandler.destroyLobby(lobbyId, creatorEmail, function(destroyed) {
+			if(destroyed) {
+				callback(true);
+			} else {
+				callback(false);
+			}
 		});
 	},
 	'addUserToLobby': function(lobbyId, paddedEmail, callback) {
@@ -183,7 +196,7 @@ var callbacks = {
 			} else {
 				complete();
 			}
-		})
+		});
 
 		function complete() {
 			data.joinSuccess = true;
@@ -231,7 +244,17 @@ var callbacks = {
 }
 
 var rollbacks = {
-	'joinRb': function(gameId, paddedEmail) {
+	'joinRb': function(lobbyId, paddedEmail) {
+		ldhandler.leaveLobby(lobbyId, paddedEmail, function(success) {
+			if(!success) {
+				//[BZ] TODO: if person was not removed from lobby we should error handle this somehow.
+			}
+		});
 
+		accountcontroller.removeLobby(lobbyId, paddedEmail, function(removed) {
+			if(!removed) {
+				//[BZ] TODO: if lobby was not removed from the user's account we should error handle this somehow.
+			}
+		})
 	}
 }

@@ -28,7 +28,7 @@ var data_lobby = {
 			}
 		});
 	},
-	'destroyChat': function(lobbyId, creatorEmail, callback) {
+	'destroyLobby': function(lobbyId, creatorEmail, callback) {
 		var db = dbclient.get(), lobby = db.collection('lobby');
 
 		lobby.remove( {lobbyId: lobbyId, creatorEmail: creatorEmail}, true, function(err, doc) {
