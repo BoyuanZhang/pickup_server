@@ -58,14 +58,12 @@ var controller = {
 		ldhandler.joinLobby(lobbyId, paddedEmail, function(success) {
 			var data = {}, ret;
 			if(success) {
-				data.joinSuccess = true;
-				callbacks.joinCb(lobbyId, paddedEmail);
+				callbacks.joinCb(lobbyId, paddedEmail, req, res);
 			} else {
 				data.joinSuccess = false;
+				ret = responseservice.buildBasicResponse(data);
+				res.json(ret);
 			}
-
-			ret = responseservice.buildBasicResponse(data);
-			res.json(ret);
 		});
 	},
 	'leaveLobby': function(req, res) {
@@ -176,12 +174,29 @@ var controller = {
 module.exports = controller;
 
 var callbacks = {
-	'joinCb': function(lobbyId, paddedEmail) {
+	'joinCb': function(lobbyId, paddedEmail, req, res) {
+		var data = {}, ret;
+
 		accountcontroller.addLobby(lobbyId, paddedEmail, function(joined) {
 			if(!joined) {
-				//[BZ] TODO: if lobby was not added to user's account we should handle this somehow.
+				failure();
+			} else {
+				complete();
 			}
 		})
+
+		function complete() {
+			data.joinSuccess = true;
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		}
+
+		function failure() {
+			rollbacks.joinRb(lobbyId, paddedEmail);
+			data.joinSuccess = false;
+			ret = responseservice.buildBasicResponse(data);
+			res.json(ret);
+		}
 	},
 	'destroyCb': function(lobbyObj) {
 		if(!lobbyObj && !lobbyObj.lobbyId && !lobbyObj.users) {

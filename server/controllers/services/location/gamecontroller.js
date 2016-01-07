@@ -4,6 +4,7 @@ var paths = require('../../../paths'),
 	responseservice = require(paths.service + '/response/responseservice'),
 	responsehelper = require(paths.controllers + '/services/helper/responsehelper'),
 	lobbycontroller = require(paths.controllers + '/services/lobby/lobbycontroller'),
+	accountcontroller = require(paths.controllers + '/services/account/accountcontroller'),
 	auth = require(paths.security + '/auth');
 
 var controller = {
@@ -103,23 +104,21 @@ module.exports = controller;
 
 var callbacks = {
 	'createCb': function(gameId, paddedEmail, req, res) {
-		var lobbyCreated = null, userAddedToLobby = null, gameAddedToAccount = null, data = {}, ret, lobbyId = gameId;
+		var lobbyCreated = null, userAddedToLobby = null, gameAddedToAccount = null, data = {}, ret;
 
 		lobbycontroller.createLobby(gameId, paddedEmail, function(created) {
 			if(!created) {
 				failure();
 			} else {
 				lobbyCreated = true;
-				complete();
-			}
-		});
-
-		lobbyController.addUserToLobby(lobbyId, paddedEmail, function(joined) {
-			if(!joined) {
-				failure();
-			} else {
-				userAddedToLobby = true;
-				complete();
+				lobbycontroller.addUserToLobby(gameId, paddedEmail, function(joined) {
+					if(!joined) {
+						failure();
+					} else {
+						userAddedToLobby = true;
+						complete();
+					}
+				});
 			}
 		});
 
@@ -135,6 +134,7 @@ var callbacks = {
 		function complete() {
 			if(lobbyCreated && userAddedToLobby && gameAddedToAccount) {
 				data.gameCreated = true;
+				data.gameId = gameId;
 				ret = responseservice.buildBasicResponse(data);
 				res.json(ret);
 			}
